@@ -51,6 +51,4 @@ VALUES ('admin', 'admin@1234');
 SELECT * FROM committee;
 ALTER TABLE committee CHANGE sub_committee sub_committe VARCHAR(255);
 
-ALTER TABLE registrations 
-ADD COLUMN registration_id VARCHAR(50) UNIQUE AFTER id,
-ADD COLUMN qr_code LONGTEXT AFTER declaration;
+-- registration_id and qr_code are already defined on registrations above; no ALTER needed.
