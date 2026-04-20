@@ -95,7 +95,7 @@ function Navbar() {
       </div>
 
       {/* Main Navigation Bar */}
-      <nav className="bg-[#2c5aa0] shadow-md sticky top-0 z-50">
+      <nav className="bg-[#1a56db] shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-12">
             {/* Year Selector */}

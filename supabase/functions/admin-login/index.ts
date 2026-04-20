@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { createAdminSessionToken } from "../_shared/adminToken.ts";
 import { corsJson, handleOptions } from "../_shared/cors.ts";
+import { verifyAdminPassword } from "../_shared/passwordArgon2.ts";
 
 Deno.serve(async (req) => {
   const opt = handleOptions(req);
@@ -39,8 +40,23 @@ Deno.serve(async (req) => {
       return corsJson({ success: false, msg: "Server error" }, 500);
     }
 
-    if (!row || row.password !== password) {
+    if (!row) {
       return corsJson({ success: false, msg: "Invalid credentials" });
+    }
+
+    const { ok, upgradedHash } = await verifyAdminPassword(row.password, String(password));
+    if (!ok) {
+      return corsJson({ success: false, msg: "Invalid credentials" });
+    }
+
+    if (upgradedHash) {
+      const { error: upErr } = await supabase
+        .from("admins")
+        .update({ password: upgradedHash })
+        .eq("id", row.id);
+      if (upErr) {
+        console.error("Failed to upgrade password hash:", upErr);
+      }
     }
 
     const token = await createAdminSessionToken(row.username, secret);

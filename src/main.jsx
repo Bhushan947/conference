@@ -1,11 +1,17 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './App.css'
-import './index.css'   
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { registerSW } from "virtual:pwa-register";
+import App from "./App.jsx";
+import { ConsentProvider } from "./context/ConsentProvider.jsx";
+import "./App.css";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+registerSW({ immediate: true });
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <ConsentProvider>
+      <App />
+    </ConsentProvider>
   </React.StrictMode>,
-)
+);

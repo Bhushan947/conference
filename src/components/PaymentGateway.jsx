@@ -1,25 +1,7 @@
 import { invokeEdge } from "../lib/supabaseFunctions";
 
-/** POST form redirect used by Qfix and similar gateways */
-export function postToPaymentGateway(url, paymentData) {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = url;
-
-  Object.keys(paymentData).forEach((key) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = paymentData[key];
-    form.appendChild(input);
-  });
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
 /**
- * Creates an order and submits to the payment portal (full page navigation).
+ * Creates an ICICI Eazypay checkout URL and redirects the browser (full-page GET).
  */
 export async function startGatewayCheckout({ amount, currency, registrationData }) {
   const result = await invokeEdge("create-payment-order", {
@@ -31,5 +13,14 @@ export async function startGatewayCheckout({ amount, currency, registrationData 
     throw new Error(result?.error || "Failed to create payment order");
   }
 
-  postToPaymentGateway(result.paymentUrl, result.paymentData);
+  if (result.orderId) {
+    sessionStorage.setItem("pendingPaymentOrderId", result.orderId);
+  }
+
+  if (result.paymentUrl) {
+    window.location.assign(result.paymentUrl);
+    return;
+  }
+
+  throw new Error("Payment URL missing from server response");
 }

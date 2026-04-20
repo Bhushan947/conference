@@ -13,9 +13,6 @@ verify_jwt = false
 [functions.register]
 verify_jwt = false
 
-[functions.payment-callback]
-verify_jwt = false
-
 [functions.verify-registration]
 verify_jwt = false
 

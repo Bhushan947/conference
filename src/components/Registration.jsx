@@ -29,7 +29,7 @@ function Registration() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse border border-gray-300 text-sm">
             <thead>
-              <tr className="bg-[#2c5aa0] text-white">
+              <tr className="bg-[#1a56db] text-white">
                 <th className="p-3 border border-gray-300 font-semibold">Category</th>
                 <th className="p-3 border border-gray-300 font-semibold">Sub-category</th>
                 <th className="p-3 border border-gray-300 font-semibold">South Asian</th>

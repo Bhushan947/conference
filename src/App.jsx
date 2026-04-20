@@ -19,6 +19,10 @@ import RegistrationSuccess from "./components/RegistrationSuccess";
 import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
 import TestRegistration from "./components/TestRegistration";
+import ConferenceRulesAndPolicies from "./components/ConferenceRulesAndPolicies";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import CookieConsent from "./components/CookieConsent";
+import OptionalScripts from "./components/OptionalScripts";
 
 const testRegistrationEnabled =
   import.meta.env.DEV || import.meta.env.VITE_ENABLE_TEST_REGISTRATION === "true";
@@ -33,6 +37,8 @@ function App() {
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/registration" element={<Registration />} />
+        <Route path="/rules-and-policies" element={<ConferenceRulesAndPolicies />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/call-for-papers" element={<CallForPapers />} />
         <Route path="/committee/SteeringCommitte" element={<SteeringCommitte />} />
@@ -52,6 +58,8 @@ function App() {
           }
         />
       </Routes>
+      <OptionalScripts />
+      <CookieConsent />
       <Footer />
     </Router>
   );

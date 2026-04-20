@@ -45,10 +45,8 @@ CREATE TABLE registrations (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO admins (username, password)
-VALUES ('admin', 'admin@1234');
+-- Create the admin row yourself: hash a strong password with
+-- `node scripts/hash-admin-password.mjs "<password>"` and INSERT the PHC string only.
 
 SELECT * FROM committee;
 ALTER TABLE committee CHANGE sub_committee sub_committe VARCHAR(255);
-
--- registration_id and qr_code are already defined on registrations above; no ALTER needed.

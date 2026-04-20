@@ -35,7 +35,6 @@ export function supabaseFunctionUrl(functionName) {
 
 export const EDGE_FUNCTIONS = {
   CREATE_PAYMENT_ORDER: supabaseFunctionUrl("create-payment-order"),
-  PAYMENT_CALLBACK: supabaseFunctionUrl("payment-callback"),
   VERIFY_PAYMENT: supabaseFunctionUrl("verify-payment"),
   REGISTER: supabaseFunctionUrl("register"),
   VERIFY_REGISTRATION: supabaseFunctionUrl("verify-registration"),

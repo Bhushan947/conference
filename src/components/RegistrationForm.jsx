@@ -1,28 +1,45 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { startGatewayCheckout } from "./PaymentGateway";
+import { declarationCheckboxText } from "../content/conferencePolicies";
+import {
+  loadRegistrationDraft,
+  saveRegistrationDraft,
+  clampStep,
+} from "../lib/registrationStorage";
+
+const DEFAULT_FORM = {
+  fullName: "",
+  affiliation: "",
+  designation: "UG Student",
+  country: "",
+  email: "",
+  contactNumber: "",
+  participantType: "Author",
+  paperId: "",
+  paperTitle: "",
+  numAuthors: "",
+  subCategory: "UG / PG / PhD Student",
+  region: "South Asian",
+  attendWorkshop: "No",
+  modeOfPayment: "",
+  transactionId: "",
+  dateOfPayment: "",
+  declaration: false,
+};
+
+function getInitialRegistrationState() {
+  const draft = loadRegistrationDraft();
+  const formData = { ...DEFAULT_FORM, ...(draft?.formData ?? {}) };
+  const currentStep = clampStep(draft?.currentStep);
+  return { formData, currentStep };
+}
 
 function RegistrationForm() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const initial = getInitialRegistrationState();
+  const [currentStep, setCurrentStep] = useState(initial.currentStep);
   const [paymentBusy, setPaymentBusy] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    affiliation: "",
-    designation: "UG Student",
-    country: "",
-    email: "",
-    contactNumber: "",
-    participantType: "Author",
-    paperId: "",
-    paperTitle: "",
-    numAuthors: "",
-    subCategory: "UG / PG / PhD Student",
-    region: "South Asian",
-    attendWorkshop: "No",
-    modeOfPayment: "",
-    transactionId: "",
-    dateOfPayment: "",
-    declaration: false,
-  });
+  const [formData, setFormData] = useState(initial.formData);
 
   const [fee, setFee] = useState({ usd: 0, inr: 0 });
 
@@ -41,6 +58,14 @@ function RegistrationForm() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  useEffect(() => {
+    saveRegistrationDraft({
+      version: 1,
+      currentStep,
+      formData,
+    });
+  }, [formData, currentStep]);
 
   useEffect(() => {
     let usd = 0;
@@ -159,9 +184,9 @@ function RegistrationForm() {
               className={`w-10 h-10 flex items-center justify-center font-bold rounded-full border-2 
                 ${
                   currentStep === step
-                    ? "bg-[#2c5aa0] text-white border-[#2c5aa0]"
+                    ? "bg-[#1a56db] text-white border-[#1a56db]"
                     : currentStep > step
-                    ? "bg-green-500 text-white border-green-500"
+                    ? "bg-[#16a34a] text-white border-[#16a34a]"
                     : "bg-gray-100 text-gray-400 border-gray-200"
                 } transition-all duration-300 shadow-sm`}
             >
@@ -170,7 +195,7 @@ function RegistrationForm() {
             {index < 2 && (
               <div
                 className={`w-12 md:w-20 h-1 
-                  ${currentStep > step ? "bg-green-500" : "bg-gray-200"}
+                  ${currentStep > step ? "bg-[#16a34a]" : "bg-gray-200"}
                   transition-colors duration-300`}
               />
             )}
@@ -184,7 +209,7 @@ function RegistrationForm() {
           <div className="animate-fadeInDown">
             {/* A. Participant Information */}
             <section className="mb-8">
-              <h4 className="text-lg font-bold text-[#2c5aa0] border-b border-gray-200 pb-2 mb-6">
+              <h4 className="text-lg font-bold text-[#1a56db] border-b border-gray-200 pb-2 mb-6">
                 Step 1: Participant Information
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -301,7 +326,7 @@ function RegistrationForm() {
             {/* C. Author Details */}
             {formData.participantType === "Author" && (
               <section className="bg-blue-50 p-5 rounded-lg border border-blue-100 animate-slideDown">
-                <h4 className="text-md font-bold text-[#2c5aa0] mb-4 flex items-center">
+                <h4 className="text-md font-bold text-[#1a56db] mb-4 flex items-center">
                   C. Author Details
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -351,7 +376,7 @@ function RegistrationForm() {
         {/* ================= STEP 2: Fee Selection & Workshop ================= */}
         {currentStep === 2 && (
           <div className="animate-fadeInDown">
-            <h4 className="text-lg font-bold text-[#2c5aa0] border-b border-gray-200 pb-2 mb-6">
+            <h4 className="text-lg font-bold text-[#1a56db] border-b border-gray-200 pb-2 mb-6">
               Step 2: Fee Selection & Add-ons
             </h4>
 
@@ -441,7 +466,7 @@ function RegistrationForm() {
                 <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span>Total Payable Amount</span>
               </h4>
-              <div className="text-4xl font-extrabold text-[#2c5aa0] animate-zoomFadeIn">
+              <div className="text-4xl font-extrabold text-[#1a56db] animate-zoomFadeIn">
                 $ {fee.usd} {fee.inr > 0 && <span className="text-2xl text-gray-500 font-bold ml-2">/ ₹ {fee.inr}</span>}
               </div>
             </section>
@@ -451,11 +476,11 @@ function RegistrationForm() {
         {/* ================= STEP 3: Payment & Declaration ================= */}
         {currentStep === 3 && (
           <div className="animate-fadeInDown">
-            <h4 className="text-lg font-bold text-[#2c5aa0] border-b border-gray-200 pb-2 mb-6">
+            <h4 className="text-lg font-bold text-[#1a56db] border-b border-gray-200 pb-2 mb-6">
               Step 3: Payment & Declaration
             </h4>
 
-            <div className="bg-blue-600 text-white rounded p-4 mb-6 text-center shadow">
+            <div className="bg-[#1a56db] text-white rounded p-4 mb-6 text-center shadow">
               <p className="text-sm opacity-90 mb-1">Amount due</p>
               <p className="text-2xl font-bold">
                 $ {fee.usd}
@@ -483,11 +508,27 @@ function RegistrationForm() {
                   required
                   checked={formData.declaration}
                   onChange={handleChange}
-                  className="mt-1 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="mt-1 h-5 w-5 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="font-semibold leading-relaxed">
-                  I hereby confirm that the above information is correct and I agree to the conference rules and policies.
-                  I authorize payment through the secure gateway for the amount shown.
+                  {declarationCheckboxText.split("conference rules and policies").map((part, i, arr) =>
+                    i < arr.length - 1 ? (
+                      <span key={i}>
+                        {part}
+                        <Link
+                          to="/rules-and-policies"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#1a56db] underline underline-offset-2 hover:text-blue-800"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          conference rules and policies
+                        </Link>
+                      </span>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    ),
+                  )}
                 </span>
               </label>
             </section>
@@ -512,7 +553,7 @@ function RegistrationForm() {
             <button
               type="button"
               onClick={nextStep}
-              className="bg-[#2c5aa0] hover:bg-blue-800 text-white font-bold py-2 px-8 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="bg-[#1a56db] hover:bg-blue-800 text-white font-bold py-2 px-8 rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               Next Step →
             </button>
@@ -520,7 +561,7 @@ function RegistrationForm() {
             <button
               type="submit"
               disabled={paymentBusy}
-              className="bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 px-10 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="bg-[#16a34a] hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 px-10 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-[#16a34a]/50"
             >
               {paymentBusy ? "Opening payment portal…" : "Proceed to payment"}
             </button>
