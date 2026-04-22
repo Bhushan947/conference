@@ -1,53 +1,104 @@
 import { corsJson, handleOptions } from "../_shared/cors.ts";
-import { iciciAes128Decrypt } from "../_shared/iciciEazypayCrypto.ts";
+import { iciciAes128Decrypt, validateIciciAesKey } from "../_shared/iciciEazypayCrypto.ts";
 import { createPaymentCompletionProof } from "../_shared/paymentCompletionProof.ts";
+import CryptoJS from "npm:crypto-js@4.2.0";
 
-function findParam(
-  query: { [key: string]: string },
-  candidates: string[],
-): string | undefined {
-  const lowered = Object.fromEntries(
+function normalizeQuery(query: Record<string, unknown>) {
+  return Object.fromEntries(
     Object.entries(query).map(([k, v]) => [
       k.trim().replace(/\s+/g, "_").toLowerCase(),
       typeof v === "string" ? v : String(v),
     ]),
   );
-  for (const c of candidates) {
-    const key = c.trim().replace(/\s+/g, "_").toLowerCase();
-    if (lowered[key] !== undefined && lowered[key] !== "") return lowered[key];
+}
+
+function getParam(query: Record<string, string>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const k = key.trim().replace(/\s+/g, "_").toLowerCase();
+    if (query[k] !== undefined && query[k] !== "") return query[k];
   }
   return undefined;
 }
 
-function iciciConfigured(): boolean {
-  const aes = Deno.env.get("ICICI_EAZYPAY_AES_KEY") ?? "";
-  return aes.trim().length > 0;
+function hashSha512(input: string): string {
+  return CryptoJS.SHA512(input).toString(CryptoJS.enc.Hex);
 }
 
-function tryMatchOrderFromIciciResponse(
-  query: { [key: string]: string },
-  aesKey: string,
-  expectedOrderId: string,
-): boolean {
+function verifyIciciResponseSignature(query: Record<string, string>, aesKey: string): boolean {
+  const rs = getParam(query, ["RS", "R_S"]);
+  if (!rs) {
+    // Some merchants may have signature validation disabled in enrollment. Keep flow compatible.
+    return true;
+  }
+
+  const merchantId = getParam(query, ["ID", "MerchantId", "Merchant ID"]) ?? "";
+  const responseCode = getParam(query, ["Response_Code", "Response Code"]) ?? "";
+  const uniqueRef = getParam(query, ["Unique_Ref_Number", "Unique Ref Number", "Unique_Ref_No"]) ?? "";
+  const serviceTax = getParam(
+    query,
+    ["Service_Tax_Amount", "Service Tax Amount", "ServiceTaxAmount", "ServiceTax", "Service Tax"],
+  ) ?? "";
+  const processingFee = getParam(
+    query,
+    ["Processing_Fee_Amount", "Processing Fee Amount", "ProcessingFeeAmount"],
+  ) ?? "";
+  const totalAmount = getParam(query, ["Total_Amount", "Total Amount", "TotalAmount"]) ?? "";
+  const txnAmount = getParam(query, ["Transaction_Amount", "Transaction Amount", "TransactionAmount"]) ?? "";
+  const txnDate = getParam(query, ["Transaction_Date", "Transaction Date", "TransactionDate"]) ?? "";
+  const interchange = getParam(query, ["Interchange_Value", "Interchange Value", "InterchangeValue"]) ?? "";
+  const tdr = getParam(query, ["TDR"]) ?? "";
+  const paymentMode = getParam(query, ["Payment_Mode", "Payment Mode", "PaymentMode"]) ?? "";
+  const subMerchantId = getParam(
+    query,
+    ["SubMerchantId", "Sub Merchant Id", "Sub_Merchant_Id", "submerchantid"],
+  ) ?? "";
+  const referenceNo = getParam(
+    query,
+    ["ReferenceNo", "Reference No", "Reference_No", "Merchant_Txn_Ref", "Merchant Txn Ref"],
+  ) ?? "";
+  const tps = getParam(query, ["TPS"]) ?? "";
+
+  const plain = [
+    merchantId,
+    responseCode,
+    uniqueRef,
+    serviceTax,
+    processingFee,
+    totalAmount,
+    txnAmount,
+    txnDate,
+    interchange,
+    tdr,
+    paymentMode,
+    subMerchantId,
+    referenceNo,
+    tps,
+    aesKey,
+  ].join("|");
+
+  const expected = hashSha512(plain);
+  return expected.toLowerCase() === rs.toLowerCase();
+}
+
+function validateOrderRef(query: Record<string, string>, aesKey: string, expectedOrderId: string): boolean {
   if (!expectedOrderId) return false;
 
-  const merchantTxn = findParam(query, [
+  const merchantTxn = getParam(query, [
     "Merchant_Txn_Ref",
     "Merchant Txn Ref",
     "MerchantTxnRef",
     "Reference_No",
     "Reference No",
   ]);
-  if (merchantTxn !== undefined) return merchantTxn === expectedOrderId;
+  if (merchantTxn != null) return merchantTxn.trim() === expectedOrderId.trim();
 
-  const interchange = findParam(query, ["Interchange_Value", "Interchange Value", "InterchangeValue"]);
+  const interchange = getParam(query, ["Interchange_Value", "Interchange Value", "InterchangeValue"]);
   if (!interchange) return false;
 
   try {
-    const plain = iciciAes128Decrypt(interchange, aesKey);
-    const parts = plain.split("|");
-    if (parts.some((p) => p.trim() === expectedOrderId)) return true;
-    return plain.includes(expectedOrderId);
+    const decrypted = iciciAes128Decrypt(interchange, aesKey);
+    const parts = decrypted.split("|").map((p) => p.trim());
+    return parts.includes(expectedOrderId) || decrypted.includes(expectedOrderId);
   } catch {
     return false;
   }
@@ -60,82 +111,95 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const query = (body.query ?? body.params ?? {}) as { [key: string]: string };
+    const rawQuery = (body.query ?? body.params ?? {}) as Record<string, unknown>;
     const expectedOrderId = typeof body.expectedOrderId === "string" ? body.expectedOrderId.trim() : "";
     const registrantEmail = typeof body.registrantEmail === "string" ? body.registrantEmail.trim() : "";
 
-    if (!iciciConfigured()) {
-      return corsJson({ error: "ICICI_EAZYPAY_AES_KEY is not set for payment verification." }, 500);
-    }
-
-    const responseCode = findParam(query, ["Response_Code", "Response Code", "ResponseCode"]);
-    const isIciciStyle = responseCode !== undefined ||
-      findParam(query, ["Interchange_Value", "Interchange Value"]) !== undefined;
-
-    if (!isIciciStyle) {
-      return corsJson({
-        success: false,
-        verified: false,
-        gateway: "icici-eazypay",
-        error: "Missing ICICI payment response (expected Response_Code or Interchange_Value).",
-      }, 400);
-    }
-
+    const query = normalizeQuery(rawQuery);
     const aesKey = (Deno.env.get("ICICI_EAZYPAY_AES_KEY") ?? "").trim();
-    const success = responseCode === "E000";
+    if (!aesKey) return corsJson({ error: "ICICI AES key not configured" }, 500);
+    try {
+      validateIciciAesKey(aesKey);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Invalid ICICI AES key";
+      return corsJson({ error: msg }, 500);
+    }
 
-    if (!success) {
+    const responseCode = getParam(query, [
+      "Response_Code",
+      "Response Code",
+      "ResponseCode",
+    ]);
+
+    if (!responseCode) {
       return corsJson({
         success: false,
         verified: false,
         gateway: "icici-eazypay",
-        error: responseCode ? `Transaction not successful (${responseCode})` : "Missing response code",
+        error: "Missing Response_Code",
       });
     }
 
-    const uniqueRef = findParam(query, [
-      "Unique_Ref_Number",
-      "Unique Ref Number",
-      "Unique_Ref_No",
-      "Bank_Reference_No",
-      "Bank Reference No",
-      "BRN",
-    ]);
+    if (responseCode !== "E000") {
+      return corsJson({
+        success: false,
+        verified: false,
+        gateway: "icici-eazypay",
+        error: `Transaction failed (${responseCode})`,
+      });
+    }
+
+    const signatureOk = verifyIciciResponseSignature(query, aesKey);
+    if (!signatureOk) {
+      return corsJson({
+        success: false,
+        verified: false,
+        gateway: "icici-eazypay",
+        error: "Signature validation failed",
+      });
+    }
 
     if (!expectedOrderId) {
       return corsJson({
         success: false,
         verified: false,
         gateway: "icici-eazypay",
-        error: "Missing expected order reference (session). Start registration again from the payment step.",
-      }, 400);
+        error: "Missing expected order ID",
+      });
     }
+
+    if (!validateOrderRef(query, aesKey, expectedOrderId)) {
+      return corsJson({
+        success: false,
+        verified: false,
+        gateway: "icici-eazypay",
+        error: "Order mismatch",
+      });
+    }
+
+    const txnId = getParam(query, [
+      "Unique_Ref_Number",
+      "Unique Ref Number",
+      "UniqueRefNumber",
+      "Bank_Reference_No",
+      "BRN",
+    ]) || expectedOrderId;
 
     if (!registrantEmail || !registrantEmail.includes("@")) {
       return corsJson({
         success: false,
         verified: false,
         gateway: "icici-eazypay",
-        error: "Missing or invalid registrant email for payment confirmation.",
-      }, 400);
-    }
-
-    const orderOk = tryMatchOrderFromIciciResponse(query, aesKey, expectedOrderId);
-    if (!orderOk) {
-      return corsJson({
-        success: false,
-        verified: false,
-        gateway: "icici-eazypay",
-        error: "Order reference mismatch",
+        error: "Invalid registrant email",
       });
     }
 
     const completionSecret = (Deno.env.get("PAYMENT_COMPLETION_SECRET") ?? "").trim();
+
     if (completionSecret.length < 16) {
       return corsJson(
         {
-          error:
-            "PAYMENT_COMPLETION_SECRET is not set or too short (min 16 characters). Add it under Edge Functions secrets.",
+          error: "PAYMENT_COMPLETION_SECRET must be at least 16 characters",
         },
         500,
       );
@@ -151,13 +215,18 @@ Deno.serve(async (req) => {
       success: true,
       verified: true,
       gateway: "icici-eazypay",
-      transactionId: uniqueRef || expectedOrderId || "",
+      transactionId: txnId,
       paymentStatus: "success",
       completionProof: proof,
       completionProofExpiresAt: expiresAt,
     });
   } catch (e) {
-    console.error(e);
-    return corsJson({ error: "Payment verification failed" }, 500);
+    console.error("Verify payment error:", e);
+    return corsJson({
+      success: false,
+      verified: false,
+      gateway: "icici-eazypay",
+      error: "Internal verification error",
+    }, 500);
   }
 });

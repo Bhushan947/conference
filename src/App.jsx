@@ -48,6 +48,7 @@ function App() {
         <Route path="/KeyNotes" element={<KeyNotes />} />
         <Route path="/verify-ticket" element={<VerifyTicket />} />
         <Route path="/payment-callback" element={<PaymentCallback />} />
+        <Route path="/payment_callback" element={<PaymentCallback />} />
         <Route path="/registration-success" element={<RegistrationSuccess />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />

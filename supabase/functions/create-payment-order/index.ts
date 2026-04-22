@@ -1,14 +1,12 @@
 import { corsJson, handleOptions } from "../_shared/cors.ts";
-import { iciciAes128Encrypt } from "../_shared/iciciEazypayCrypto.ts";
+import { iciciAes128Encrypt, validateIciciAesKey } from "../_shared/iciciEazypayCrypto.ts";
 
-// Match ICICI portal redirection path (eazypayLink vs EazyPG); override with ICICI_EAZYPAY_BASE_URL.
-const DEFAULT_ICICI_EAZYPAY_BASE = "https://eazypay.icicibank.com/EazyPG";
+const DEFAULT_ICICI_EAZYPAY_BASE = "https://eazypay.icicibank.com/EazyPG?";
 
 function trimEndSlashes(s: string): string {
   return s.replace(/\/+$/, "");
 }
 
-/** ICICI checkout must load on *.icicibank.com — never your own domain (common secret mix-up). */
 function resolveIciciEazypayBaseUrl(rawFromEnv: string, frontendUrl: string): string {
   const raw = rawFromEnv.trim();
   if (!raw) return DEFAULT_ICICI_EAZYPAY_BASE;
@@ -17,44 +15,31 @@ function resolveIciciEazypayBaseUrl(rawFromEnv: string, frontendUrl: string): st
   try {
     parsed = new URL(raw);
   } catch {
-    console.warn(
-      "[create-payment-order] ICICI_EAZYPAY_BASE_URL is not a valid URL; using default ICICI gateway.",
-    );
     return DEFAULT_ICICI_EAZYPAY_BASE;
   }
 
   const host = parsed.hostname.toLowerCase();
   const onIcici = host === "icicibank.com" || host.endsWith(".icicibank.com");
-  if (!onIcici) {
-    console.warn(
-      `[create-payment-order] ICICI_EAZYPAY_BASE_URL must be an ICICI host (*.icicibank.com), not "${host}"; using default gateway.`,
-    );
-    return DEFAULT_ICICI_EAZYPAY_BASE;
-  }
+  if (!onIcici) return DEFAULT_ICICI_EAZYPAY_BASE;
 
   try {
     const frontHost = new URL(frontendUrl).hostname.toLowerCase();
-    if (host === frontHost) {
-      console.warn(
-        "[create-payment-order] ICICI_EAZYPAY_BASE_URL cannot match FRONTEND_URL; using default gateway.",
-      );
-      return DEFAULT_ICICI_EAZYPAY_BASE;
-    }
+    if (host === frontHost) return DEFAULT_ICICI_EAZYPAY_BASE;
   } catch {
-    /* ignore */
+    // ignore frontend URL parse issues
   }
 
-  const baseNoTrailingSlash = `${parsed.origin}${parsed.pathname}`.replace(/\/+$/, "");
-  return baseNoTrailingSlash || DEFAULT_ICICI_EAZYPAY_BASE;
+  const path = parsed.pathname.replace(/\/+$/, "");
+  if (path.toLowerCase() !== "/eazypg") {
+    return DEFAULT_ICICI_EAZYPAY_BASE;
+  }
+
+  return `${parsed.origin}${parsed.pathname}`.replace(/\/+$/, "") || DEFAULT_ICICI_EAZYPAY_BASE;
 }
 
 function normalizeAmount(amount: number, currency: string): string {
-  if (currency === "INR") {
-    const n = Math.round(amount);
-    return String(n);
-  }
-  const n = Math.round(amount * 100) / 100;
-  return String(n);
+  if (currency === "INR") return String(Math.round(amount));
+  return String(Math.round(amount * 100) / 100);
 }
 
 function normalizeIciciText(value: unknown, maxLen = 98, fallback = "NA"): string {
@@ -64,55 +49,100 @@ function normalizeIciciText(value: unknown, maxLen = 98, fallback = "NA"): strin
 }
 
 function normalizeIciciAmount(value: string): string {
-  const digitsOnly = String(value ?? "").replace(/[^\d]/g, "");
-  const trimmed = digitsOnly.replace(/^0+/, "") || "0";
+  const intPart = String(value ?? "").split(".")[0].replace(/[^\d]/g, "");
+  const trimmed = intPart.replace(/^0+/, "") || "0";
   return trimmed.slice(0, 9);
 }
 
 function normalizeIciciMobile(value: unknown): string {
   const digitsOnly = String(value ?? "").replace(/\D/g, "");
   if (!digitsOnly) return "0000000000";
-  const last10 = digitsOnly.slice(-10);
-  return last10.padStart(10, "0").slice(0, 10);
+  return digitsOnly.slice(-10).padStart(10, "0").slice(0, 10);
+}
+
+function normalizeIciciReferenceNo(ref: string): string {
+  return normalizeIciciText(ref, 98, `REF${Date.now()}`);
+}
+
+function buildFallbackFormNo(referenceNo: string): string {
+  const cleanRef = normalizeIciciReferenceNo(referenceNo);
+  const randomTail = Math.floor(Math.random() * 1_000_000).toString().padStart(6, "0");
+  return normalizeIciciText(`FORM${cleanRef.slice(-8)}${randomTail}`, 98, "FORM000000");
+}
+
+function maskMobileForLog(value: string): string {
+  const digits = String(value ?? "").replace(/\D/g, "");
+  if (digits.length < 4) return "****";
+  return `${"*".repeat(Math.max(0, digits.length - 4))}${digits.slice(-4)}`;
+}
+
+function maskEmailForLog(value: string): string {
+  const email = String(value ?? "").trim();
+  const at = email.indexOf("@");
+  if (at <= 1) return "***";
+  const local = email.slice(0, at);
+  const domain = email.slice(at + 1);
+  return `${local.slice(0, 2)}${"*".repeat(Math.max(0, local.length - 2))}@${domain || "***"}`;
 }
 
 function buildMandatoryFieldsPipe(opts: {
   referenceNo: string;
-  subMerchantId: string;
+  submissionId: string;
   amountStr: string;
   registrationData: Record<string, unknown>;
 }): string {
-  const { referenceNo, subMerchantId, amountStr, registrationData } = opts;
-
-  const studentName = normalizeIciciText(registrationData.fullName, 98, "Student");
-  const mobile = normalizeIciciMobile(registrationData.contactNumber);
-  const email = normalizeIciciText(registrationData.email, 98, "no-reply@example.com");
-  const formNo = normalizeIciciText(registrationData.paperId, 98, "Form No");
-  const department = normalizeIciciText(registrationData.affiliation, 98, "Department");
-  const category = normalizeIciciText(registrationData.subCategory || registrationData.participantType, 98, "Category");
-  const post = normalizeIciciText(registrationData.designation, 98, "Post");
-
-  // Mandatory order as per ICICI config:
-  // 1 Reference No | 2 SUB Merchant Id | 3 PG Amount | 4 Student Name | 5 Mobile Number
-  // 6 Email Id | 7 Form No | 8 Department | 9 Category | 10 Post
+  const { referenceNo, submissionId, amountStr, registrationData } = opts;
+  const cleanRef = normalizeIciciReferenceNo(referenceNo);
+  const cleanSubmissionId = normalizeIciciText(submissionId, 98, "0");
+  const paperId = normalizeIciciText(registrationData.paperId, 98, "");
+  const formNo = paperId || buildFallbackFormNo(cleanRef);
   return [
-    normalizeIciciText(referenceNo, 98, "REF"),
-    normalizeIciciText(subMerchantId, 98, "SUB"),
-    normalizeIciciAmount(amountStr),
-    studentName,
-    mobile,
-    email,
-    formNo,
-    department,
-    category,
-    post,
+    cleanRef, // 1 Reference No
+    cleanSubmissionId, // 2 Submission Id
+    normalizeIciciAmount(amountStr), // 3 PG Amount
+    normalizeIciciText(registrationData.fullName, 98, "Student"), // 4 Student Name
+    normalizeIciciMobile(registrationData.contactNumber), // 5 Mobile Number
+    normalizeIciciText(registrationData.email, 98, "no-reply@example.com"), // 6 Email Id
+    formNo, // 7 Form No
+    normalizeIciciText(registrationData.affiliation, 98, "Department"), // 8 Department
+    normalizeIciciText(
+      registrationData.subCategory || registrationData.participantType,
+      98,
+      "Category",
+    ), // 9 Category
+    normalizeIciciText(registrationData.designation, 98, "Post"), // 10 Post
   ].join("|");
+}
+
+function logMandatoryFieldsDebug(mandatoryPlain: string): void {
+  const parts = mandatoryPlain.split("|");
+  const labels = [
+    "Reference No",
+    "Submission Id",
+    "PG Amount",
+    "Student Name",
+    "Mobile Number",
+    "Email Id",
+    "Form No",
+    "Department",
+    "Category",
+    "Post",
+  ];
+  const maskedParts = parts.map((value, i) => {
+    if (i === 4) return maskMobileForLog(value);
+    if (i === 5) return maskEmailForLog(value);
+    return value;
+  });
+  console.log(
+    "[create-payment-order] ICICI mandatory fields (masked)",
+    Object.fromEntries(labels.map((label, i) => [label, maskedParts[i] ?? ""])),
+  );
 }
 
 function buildIciciEazypayUrl(opts: {
   baseUrl: string;
   merchantId: string;
-  subMerchantId: string;
+  submissionId: string;
   aesKey: string;
   referenceNo: string;
   amountStr: string;
@@ -121,30 +151,34 @@ function buildIciciEazypayUrl(opts: {
   optionalPipe: string | null;
   registrationData: Record<string, unknown>;
 }): string {
-  const { aesKey, referenceNo, subMerchantId, amountStr } = opts;
-  const enc = (plain: string) => iciciAes128Encrypt(plain, aesKey);
   const mandatoryPlain = buildMandatoryFieldsPipe({
-    referenceNo,
-    subMerchantId,
-    amountStr,
+    referenceNo: opts.referenceNo,
+    submissionId: opts.submissionId,
+    amountStr: opts.amountStr,
     registrationData: opts.registrationData,
   });
-  const optionalFields = opts.optionalPipe ? enc(opts.optionalPipe) : "";
+  logMandatoryFieldsDebug(mandatoryPlain);
+
+  const cleanRef = normalizeIciciReferenceNo(opts.referenceNo);
+  const cleanSubmissionId = normalizeIciciText(opts.submissionId, 98, "0");
+  const cleanPaymode = String(opts.paymode ?? "9").replace(/\D/g, "") || "9";
+  const enc = (plain: string) => iciciAes128Encrypt(plain, opts.aesKey);
 
   const pairs: [string, string][] = [
     ["merchantid", opts.merchantId],
     ["mandatory fields", enc(mandatoryPlain)],
-    ["optional fields", optionalFields],
+    ["optional fields", opts.optionalPipe ? enc(opts.optionalPipe) : ""],
     ["returnurl", enc(opts.returnUrl)],
-    ["Reference No", enc(referenceNo)],
-    ["submerchantid", enc(subMerchantId)],
-    ["transaction amount", enc(amountStr)],
-    ["paymode", enc(opts.paymode)],
+    ["Reference No", enc(cleanRef)],
+    ["submerchantid", enc(cleanSubmissionId)],
+    ["transaction amount", enc(normalizeIciciAmount(opts.amountStr))],
+    ["paymode", enc(cleanPaymode)],
   ];
 
-  const qs = pairs.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
-  const base = opts.baseUrl.replace(/[?]+$/, "");
-  return `${base}?${qs}`;
+  const encodedQuery = pairs
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join("&");
+  return `${opts.baseUrl.replace(/[?]+$/, "")}?${encodedQuery}`;
 }
 
 Deno.serve(async (req) => {
@@ -155,32 +189,17 @@ Deno.serve(async (req) => {
   try {
     const FRONTEND_URL = trimEndSlashes(Deno.env.get("FRONTEND_URL") ?? "http://localhost:5173");
     const PAYMENT_CALLBACK_URL = (Deno.env.get("PAYMENT_CALLBACK_URL") ?? "").trim();
-
     const merchantId = (Deno.env.get("ICICI_EAZYPAY_MERCHANT_ID") ?? "").trim();
     const aesKey = (Deno.env.get("ICICI_EAZYPAY_AES_KEY") ?? "").trim();
 
     if (!merchantId || !aesKey) {
-      const missing: string[] = [];
-      if (!merchantId) missing.push("ICICI_EAZYPAY_MERCHANT_ID");
-      if (!aesKey) missing.push("ICICI_EAZYPAY_AES_KEY");
-      return corsJson(
-        {
-          error:
-            `Payment gateway not configured - Edge runtime has no value for: ${missing.join(", ")}. ` +
-            `Add them under Project Settings → Edge Functions → Secrets for this same project as VITE_SUPABASE_URL, then redeploy create-payment-order.`,
-        },
-        500,
-      );
+      return corsJson({ error: "Payment gateway not configured in edge secrets." }, 500);
     }
-
-    if (!(aesKey.length >= 16)) {
-      return corsJson(
-        {
-          error:
-            "ICICI_EAZYPAY_AES_KEY must be at least 16 characters (AES-128). Check the key from the bank portal.",
-        },
-        400,
-      );
+    try {
+      validateIciciAesKey(aesKey);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Invalid ICICI AES key";
+      return corsJson({ error: msg }, 400);
     }
 
     const { amount, currency, registrationData } = await req.json();
@@ -188,21 +207,17 @@ Deno.serve(async (req) => {
       return corsJson({ error: "Invalid registration data" }, 400);
     }
 
-    const cur = (currency || "INR").toUpperCase();
+    const cur = String(currency || "INR").toUpperCase();
     if (cur !== "INR") {
-      return corsJson(
-        {
-          error: "Online payment is only available in INR (ICICI Eazypay).",
-        },
-        400,
-      );
+      return corsJson({ error: "Online payment is only available in INR (ICICI Eazypay)." }, 400);
     }
 
     const amountStr = normalizeAmount(Number(amount), cur);
-    const orderId = `2AI-ORDER-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const orderId = normalizeIciciReferenceNo(
+      `2AI${Date.now().toString(36)}${Math.random().toString(36).substring(2, 6)}`.toUpperCase(),
+    );
     const returnUrlPlain = PAYMENT_CALLBACK_URL || `${FRONTEND_URL}/payment-callback`;
-
-    const subMerchantId = (Deno.env.get("ICICI_EAZYPAY_SUB_MERCHANT_ID") ?? merchantId).trim();
+    const submissionId = (Deno.env.get("ICICI_EAZYPAY_SUB_MERCHANT_ID") ?? merchantId).trim();
     const paymode = (Deno.env.get("ICICI_EAZYPAY_PAYMODE") ?? "9").trim();
     const optionalPipe = (Deno.env.get("ICICI_EAZYPAY_OPTIONAL_FIELDS") ?? "").trim() || null;
     const baseUrl = resolveIciciEazypayBaseUrl(
@@ -213,7 +228,7 @@ Deno.serve(async (req) => {
     const paymentUrl = buildIciciEazypayUrl({
       baseUrl,
       merchantId,
-      subMerchantId,
+      submissionId,
       aesKey,
       referenceNo: orderId,
       amountStr,
