@@ -152,21 +152,21 @@ function Home() {
                       <Bell size={16} className="text-green-600 flex-shrink-0" />
                       Notification of Acceptance
                     </span>
-                    <span className="font-semibold text-gray-800">15-Mar-2026</span>
+                    <span className="font-semibold text-gray-800">25-April-2026</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-100">
                     <span className="text-gray-700 flex items-center gap-2">
                       <Camera size={16} className="text-purple-600 flex-shrink-0" />
                       Camera Ready Submission
                     </span>
-                    <span className="font-semibold text-gray-800">20-Mar-2026</span>
+                    <span className="font-semibold text-gray-800">01-June-2026</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-100">
                     <span className="text-gray-700 flex items-center gap-2">
                       <Calendar size={16} className="text-orange-600 flex-shrink-0" />
                       Registration (Start)
                     </span>
-                    <span className="font-semibold text-gray-800">20-Mar-2026</span>
+                    <span className="font-semibold text-gray-800">25-April-2026</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-100">
                     <span className="text-gray-700 flex items-center gap-2">

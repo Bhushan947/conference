@@ -29,7 +29,7 @@ const NotificationBar = () => {
         {/* 3. SPRINGER NEWS */}
         <span className="text-white font-semibold text-sm md:text-base mx-6 inline-flex items-center gap-2">
           <BookOpen size={18} className="text-yellow-300 flex-shrink-0" />
-          All selected and presented articles will be published in Springer CCIS Proceedings (Scopus Indexed, Pending approval)
+          All selected and presented articles will be published in Springer CCIS Proceedings (Scopus Indexed, Approved)
         </span>
         <span className="text-yellow-300 mx-3 text-xl">•</span>
 

@@ -4,6 +4,7 @@ import PageLayout from "./PageLayout";
 import RegistrationTicket from "./RegistrationTicket";
 import { invokeEdge } from "../lib/supabaseFunctions";
 import { clearAdminToken, getAdminToken } from "../lib/adminSession";
+import { startGatewayCheckout } from "./PaymentGateway";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
   const [actionMsg, setActionMsg] = useState("");
   const [editForm, setEditForm] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
+  const [testPayBusy, setTestPayBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -249,6 +251,43 @@ export default function AdminDashboard() {
       setActionMsg(e?.message || "Could not delete registration");
     } finally {
       setDeleteBusyId("");
+    }
+  };
+
+  const startOneRupeeTestPayment = async () => {
+    setActionMsg("");
+    setTestPayBusy(true);
+    try {
+      const stamp = Date.now();
+      const testRegistrationData = {
+        fullName: "Admin Test Payment",
+        affiliation: "2AI Admin QA",
+        designation: "QA Engineer",
+        country: "India",
+        email: `admin-test-${stamp}@example.com`,
+        contactNumber: "9999999999",
+        participantType: "Test",
+        paperId: `TEST-${String(stamp).slice(-6)}`,
+        paperTitle: "Admin Payment Flow Test",
+        numAuthors: "1",
+        subCategory: "Test",
+        region: "South Asian",
+        attendWorkshop: "No",
+        totalFeeUsd: "0",
+        totalFeeInr: "1",
+        modeOfPayment: "ICICI Eazypay",
+        declaration: true,
+      };
+
+      sessionStorage.setItem("pendingRegistration", JSON.stringify(testRegistrationData));
+      await startGatewayCheckout({
+        amount: 1,
+        currency: "INR",
+        registrationData: testRegistrationData,
+      });
+    } catch (e) {
+      setActionMsg(e?.message || "Could not start ₹1 test payment");
+      setTestPayBusy(false);
     }
   };
 
@@ -496,6 +535,14 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={testPayBusy}
+              onClick={startOneRupeeTestPayment}
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700 disabled:opacity-50 transition text-sm"
+            >
+              {testPayBusy ? "Starting test payment…" : "Test payment (₹1)"}
+            </button>
             <Link
               to="/verify-ticket"
               className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#2c5aa0] text-white font-medium hover:bg-[#234a85] transition text-sm"
