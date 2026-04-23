@@ -24,6 +24,48 @@ function hashSha512(input: string): string {
   return CryptoJS.SHA512(input).toString(CryptoJS.enc.Hex);
 }
 
+function parseAmpersandResponse(raw: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  const text = String(raw ?? "").trim();
+  if (!text) return out;
+  for (const pair of text.split("&")) {
+    if (!pair) continue;
+    const eq = pair.indexOf("=");
+    const keyRaw = eq >= 0 ? pair.slice(0, eq) : pair;
+    const valRaw = eq >= 0 ? pair.slice(eq + 1) : "";
+    const key = keyRaw.trim();
+    const value = valRaw.trim();
+    if (key) out[key] = value;
+  }
+  return out;
+}
+
+async function verifyViaIciciVerifyUrl(merchantId: string, referenceNo: string): Promise<string | null> {
+  const mid = String(merchantId ?? "").trim();
+  const ref = String(referenceNo ?? "").trim();
+  if (!mid || !ref) return null;
+
+  const verifyUrl = new URL("https://eazypay.icicibank.com/EazyPGVerify");
+  verifyUrl.searchParams.set("ezpaytranid", "");
+  verifyUrl.searchParams.set("amount", "");
+  verifyUrl.searchParams.set("paymentmode", "");
+  verifyUrl.searchParams.set("merchantid", mid);
+  verifyUrl.searchParams.set("trandate", "");
+  verifyUrl.searchParams.set("pgreferenceno", ref);
+
+  try {
+    const resp = await fetch(verifyUrl.toString(), { method: "GET" });
+    if (!resp.ok) return null;
+    const body = await resp.text();
+    const parsed = parseAmpersandResponse(body);
+    const status = parsed.status ?? parsed.Status ?? parsed.STATUS ?? null;
+    return status ? String(status).trim() : null;
+  } catch (e) {
+    console.error("[verify-payment] EazyPGVerify lookup failed:", e);
+    return null;
+  }
+}
+
 function verifyIciciResponseSignature(query: Record<string, string>, aesKey: string): boolean {
   const rs = getParam(query, ["RS", "R_S"]);
   if (!rs) {
@@ -117,6 +159,7 @@ Deno.serve(async (req) => {
 
     const query = normalizeQuery(rawQuery);
     const aesKey = (Deno.env.get("ICICI_EAZYPAY_AES_KEY") ?? "").trim();
+    const merchantId = (Deno.env.get("ICICI_EAZYPAY_MERCHANT_ID") ?? "").trim();
     if (!aesKey) return corsJson({ error: "ICICI AES key not configured" }, 500);
     try {
       validateIciciAesKey(aesKey);
@@ -132,11 +175,53 @@ Deno.serve(async (req) => {
     ]);
 
     if (!responseCode) {
+      // Fallback path for merchants where return URL does not include full response packet.
+      // Confirm status directly from ICICI Verify URL using merchant ID + PG reference no.
+      const verifyStatus = await verifyViaIciciVerifyUrl(merchantId, expectedOrderId);
+      const normalizedStatus = String(verifyStatus ?? "").trim().toLowerCase();
+      const successLike = normalizedStatus === "success" || normalizedStatus === "rip" || normalizedStatus === "sip";
+      if (successLike) {
+        if (!registrantEmail || !registrantEmail.includes("@")) {
+          return corsJson({
+            success: false,
+            verified: false,
+            gateway: "icici-eazypay",
+            error: "Invalid registrant email",
+          });
+        }
+
+        const completionSecret = (Deno.env.get("PAYMENT_COMPLETION_SECRET") ?? "").trim();
+        if (completionSecret.length < 16) {
+          return corsJson(
+            {
+              error: "PAYMENT_COMPLETION_SECRET must be at least 16 characters",
+            },
+            500,
+          );
+        }
+
+        const { proof, expiresAt } = await createPaymentCompletionProof(
+          completionSecret,
+          expectedOrderId,
+          registrantEmail,
+        );
+
+        return corsJson({
+          success: true,
+          verified: true,
+          gateway: "icici-eazypay",
+          transactionId: expectedOrderId,
+          paymentStatus: "success",
+          completionProof: proof,
+          completionProofExpiresAt: expiresAt,
+        });
+      }
+
       return corsJson({
         success: false,
         verified: false,
         gateway: "icici-eazypay",
-        error: "Missing Response_Code",
+        error: verifyStatus ? `Missing Response_Code (verify status: ${verifyStatus})` : "Missing Response_Code",
       });
     }
 

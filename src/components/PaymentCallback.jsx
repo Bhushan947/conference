@@ -17,13 +17,33 @@ function parsePendingRegistration() {
   }
 }
 
+function normalizeQueryKeys(query) {
+  return Object.fromEntries(
+    Object.entries(query || {}).map(([k, v]) => [
+      String(k).trim().replace(/\s+/g, "_").toLowerCase(),
+      v,
+    ]),
+  );
+}
+
+function parseIciciReturnQuery(location) {
+  const fromSearch = parseUrlQuery(location.search);
+  if (Object.keys(fromSearch).length > 0) return fromSearch;
+
+  const rawHash = typeof location.hash === "string" ? location.hash : "";
+  if (!rawHash) return {};
+  const hashBody = rawHash.startsWith("#") ? rawHash.slice(1) : rawHash;
+  const hashQuery = hashBody.includes("?") ? hashBody.slice(hashBody.indexOf("?")) : hashBody;
+  return parseUrlQuery(hashQuery);
+}
+
 function PaymentCallback() {
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState("verifying");
   const [message, setMessage] = useState("Confirming your transaction with the payment provider.");
 
-  const returnQuery = parseUrlQuery(location.search);
+  const returnQuery = parseIciciReturnQuery(location);
   const orderRef =
     returnQuery.orderId ?? sessionStorage.getItem("pendingPaymentOrderId") ?? "";
 
@@ -83,25 +103,14 @@ function PaymentCallback() {
     let cancelled = false;
 
     const verifyPayment = async () => {
-      const query = parseUrlQuery(location.search);
+      const query = parseIciciReturnQuery(location);
       const expectedOrderId = sessionStorage.getItem("pendingPaymentOrderId") ?? "";
       const pending = parsePendingRegistration();
       const registrantEmail = typeof pending?.email === "string" ? pending.email.trim() : "";
 
-      const responseCode = query.Response_Code ?? query["Response Code"];
-      const isIciciReturn =
-        responseCode != null ||
-        query.Interchange_Value != null ||
-        query["Interchange Value"] != null;
-
-      if (!isIciciReturn) {
-        if (!cancelled) {
-          setStatus("error");
-          setMessage(
-            "The payment gateway did not return a complete response. If money was debited, contact the help desk with your bank reference.",
-          );
-        }
-        return;
+      const normalized = normalizeQueryKeys(query);
+      if (Object.keys(normalized).length === 0) {
+        console.warn("[payment-callback] Empty callback params; proceeding to server verification");
       }
 
       try {
@@ -159,7 +168,7 @@ function PaymentCallback() {
     return () => {
       cancelled = true;
     };
-  }, [location.search, completeRegistration]);
+  }, [location.search, location.hash, completeRegistration]);
 
   const accent =
     status === "success" ? "bg-[#16a34a]" : status === "error" ? "bg-red-600" : "bg-[#1a56db]";

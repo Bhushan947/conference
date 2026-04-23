@@ -7,6 +7,18 @@ function trimEndSlashes(s: string): string {
   return s.replace(/\/+$/, "");
 }
 
+function resolvePaymentCallbackUrl(frontendUrl: string, configuredCallbackUrl: string): string {
+  const explicit = configuredCallbackUrl.trim();
+  if (explicit) return explicit;
+
+  const supabaseUrl = trimEndSlashes(Deno.env.get("SUPABASE_URL") ?? "");
+  if (supabaseUrl) {
+    return `${supabaseUrl}/functions/v1/icici-payment-callback`;
+  }
+
+  return `${frontendUrl}/payment-callback`;
+}
+
 function resolveIciciEazypayBaseUrl(rawFromEnv: string, frontendUrl: string): string {
   const raw = rawFromEnv.trim();
   if (!raw) return DEFAULT_ICICI_EAZYPAY_BASE;
@@ -216,7 +228,7 @@ Deno.serve(async (req) => {
     const orderId = normalizeIciciReferenceNo(
       `2AI${Date.now().toString(36)}${Math.random().toString(36).substring(2, 6)}`.toUpperCase(),
     );
-    const returnUrlPlain = PAYMENT_CALLBACK_URL || `${FRONTEND_URL}/payment-callback`;
+    const returnUrlPlain = resolvePaymentCallbackUrl(FRONTEND_URL, PAYMENT_CALLBACK_URL);
     const submissionId = (Deno.env.get("ICICI_EAZYPAY_SUB_MERCHANT_ID") ?? merchantId).trim();
     const paymode = (Deno.env.get("ICICI_EAZYPAY_PAYMODE") ?? "9").trim();
     const optionalPipe = (Deno.env.get("ICICI_EAZYPAY_OPTIONAL_FIELDS") ?? "").trim() || null;
