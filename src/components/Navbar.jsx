@@ -279,7 +279,7 @@ function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className={`lg:hidden bg-white border-t border-gray-200 overflow-hidden ${
+          <div className={`lg:hidden bg-white border-t border-gray-200 max-h-[calc(100vh-120px)] overflow-y-auto ${
             isClosing ? 'animate-slideUp' : 'animate-slideDown'
           }`}>
             <div className="px-4 py-2 space-y-1">
@@ -296,14 +296,17 @@ function Navbar() {
               {/* Committee Dropdown */}
               <div>
                 <button
-                  onClick={() => setCommitteeOpen(!committeeOpen)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCommitteeOpen(!committeeOpen);
+                  }}
                   className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                 >
                   Committee
                   <ChevronDown size={14} className={`transition-transform ${committeeOpen ? "rotate-180" : ""}`} />
                 </button>
                 {committeeOpen && (
-                  <div className="pl-4">
+                  <div className="pl-4 mt-1">
                     {committeeItems.map((item, idx) => (
                       <Link
                         key={idx}
@@ -328,14 +331,17 @@ function Navbar() {
               {/* Sessions Dropdown */}
               <div>
                 <button
-                  onClick={() => setSessionsOpen(!sessionsOpen)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSessionsOpen(!sessionsOpen);
+                  }}
                   className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
                 >
                   Sessions
                   <ChevronDown size={14} className={`transition-transform ${sessionsOpen ? "rotate-180" : ""}`} />
                 </button>
                 {sessionsOpen && (
-                  <div className="pl-4">
+                  <div className="pl-4 mt-1">
                     {sessionsItems.map((item, idx) => (
                       <Link
                         key={idx}
