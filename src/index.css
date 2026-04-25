@@ -491,3 +491,12 @@ body {
 :root[data-theme="dark"] .theme-toggle:hover {
   background-color: rgb(255 255 255 / 0.08) !important;
 }
+
+/* Speaker cards light mode fix */
+.speaker-card-light {
+  background-color: white !important;
+}
+
+:root[data-theme="dark"] .speaker-card-light {
+  background-color: rgb(31 41 55) !important;
+}
