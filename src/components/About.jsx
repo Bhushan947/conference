@@ -2,8 +2,10 @@
 // https://m4milaad.github.io/ 
 
 import PageLayout from "./PageLayout";
+import { useTheme } from "../context/themeContext";
 
 function About() {
+  const { isDark } = useTheme();
   const sections = [
     {
       title: "About Kashmir",
@@ -72,15 +74,25 @@ function About() {
             </p>
           </div>
 
-          <div 
-            className="grid border-t border-black/[0.1] dark:border-white/10 p-6 md:grid-cols-3 lg:border-l lg:border-t-0 lg:grid-cols-1 !bg-white dark:!bg-black/20"
+          <div
+            className={`grid border-t p-6 md:grid-cols-3 lg:border-l lg:border-t-0 lg:grid-cols-1 ${
+              isDark ? "border-white/20 bg-black/20" : "border-black/45 bg-[#F8F4EA]"
+            }`}
           >
-            <div className="border-b border-black/[0.1] dark:border-white/10 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-4 lg:border-b lg:border-r-0 lg:pb-4 lg:pr-0">
+            <div
+              className={`pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-4 lg:border-b lg:border-r-0 lg:pb-4 lg:pr-0 ${
+                isDark ? "border-b border-white/20" : "border-b border-black/45"
+              }`}
+            >
               <p className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">Date</p>
               <p className="mt-1 text-sm font-bold text-zinc-950 dark:text-zinc-100">June 17 - 19, 2026</p>
               <p className="mt-1 text-xs text-zinc-700 dark:text-zinc-400">Hybrid Mode</p>
             </div>
-            <div className="border-b border-black/[0.1] dark:border-white/10 py-4 md:border-b-0 md:border-r md:px-4 md:py-0 lg:border-b lg:border-r-0 lg:px-0 lg:py-4">
+            <div
+              className={`py-4 md:border-b-0 md:border-r md:px-4 md:py-0 lg:border-b lg:border-r-0 lg:px-0 lg:py-4 ${
+                isDark ? "border-b border-white/20" : "border-b border-black/45"
+              }`}
+            >
               <p className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">Venue</p>
               <a
                 href="https://www.cukashmir.ac.in/"

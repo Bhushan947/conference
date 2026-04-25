@@ -167,7 +167,7 @@ function Home() {
                     <div className="space-y-3">
                       {/* Timeline Item 1 */}
                       <div className="relative flex gap-3 items-start group">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-50 dark:bg-gray-900 border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
                           <div className="w-2 h-2 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a]"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
@@ -184,7 +184,7 @@ function Home() {
 
                       {/* Timeline Item 2 */}
                       <div className="relative flex gap-3 items-start group">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-50 dark:bg-gray-900 border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
                           <div className="w-2 h-2 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a]"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
@@ -201,7 +201,7 @@ function Home() {
 
                       {/* Timeline Item 3 */}
                       <div className="relative flex gap-3 items-start group">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-50 dark:bg-gray-900 border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
                           <div className="w-2 h-2 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a]"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
@@ -218,7 +218,7 @@ function Home() {
 
                       {/* Timeline Item 4 */}
                       <div className="relative flex gap-3 items-start group">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-50 dark:bg-gray-900 border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
                           <div className="w-2 h-2 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a]"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
@@ -235,7 +235,7 @@ function Home() {
 
                       {/* Timeline Item 5 */}
                       <div className="relative flex gap-3 items-start group">
-                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-50 dark:bg-gray-900 border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-white border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
                           <div className="w-2 h-2 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a]"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
@@ -253,7 +253,7 @@ function Home() {
                       {/* Timeline Item 6 - Conference Days */}
                       <div className="relative flex gap-3 items-start group">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a] border-2 border-[#5E6AD2] dark:border-[#c9a86a] flex items-center justify-center z-10 shadow-sm">
-                          <div className="w-2 h-2 rounded-full bg-gray-50 dark:bg-gray-900"></div>
+                          <div className="w-2 h-2 rounded-full bg-white"></div>
                         </div>
                         <div className="flex-1 flex justify-between items-baseline gap-4 pb-1">
                           <div>
