@@ -1,8 +1,8 @@
-// Edited by Milad Ajaz 
-// https://m4milaad.github.io/ 
+// Edited by Milad Ajaz
+// https://m4milaad.github.io/
 
-import { useState, useEffect } from "react";
-import { ChevronDown, Moon, Search, Sun, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Menu, Moon, Search, Sun, User, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/themeContext";
 
@@ -24,6 +24,11 @@ function Navbar() {
     { name: "Workshops", path: "/sessions/workshops" },
   ];
 
+  const navLinkClass =
+    "terminal-nav-item px-2 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950 whitespace-nowrap";
+  const mobileLinkClass =
+    "terminal-nav-item block px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950";
+
   const handleMenuToggle = () => {
     if (isOpen) {
       setIsClosing(true);
@@ -44,289 +49,207 @@ function Navbar() {
         setSessionsOpen(false);
       }
     };
+
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   return (
-    <>
-      {/* Top Bar - Logo and Utilities */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          {/* Logo Section */}
-          <div className="flex items-center gap-3">
-            <img src="/CUKLogo.png" alt="CUK Logo" className="h-12 w-auto object-contain" />
-            <img src="/logo.png" alt="Conference Logo" className="h-12 w-auto object-contain" />
-            <a 
-              href="https://www.springer.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center"
-            >
-              <img 
-                src="/springer.png" 
-                alt="Springer Logo" 
-                className="h-8 w-auto object-contain"
-              />
-            </a>
-            <div className="hidden md:block ml-2">
-              <div className="text-sm font-semibold text-gray-800">2AI</div>
-              <div className="text-xs text-gray-600">CONFERENCE 2026</div>
-            </div>
-          </div>
+    <header className="linear-nav sticky top-0 z-50 border-b border-black/[0.06] bg-white">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <img src="/CUKLogo.png" alt="CUK Logo" className="h-11 w-auto shrink-0 object-contain" />
+          <img src="/logo.png" alt="Conference Logo" className="h-11 w-auto shrink-0 object-contain" />
+          <a
+            href="https://www.springer.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden items-center sm:flex"
+          >
+            <img src="/springer.png" alt="Springer Logo" className="h-7 w-auto object-contain" />
+          </a>
+          <span className="hidden min-w-0 border-l border-black/[0.08] pl-3 md:block">
+            <span className="block text-sm font-bold text-zinc-950">2AI</span>
+            <span className="terminal-label block text-zinc-500">CONFERENCE 2026</span>
+          </span>
+        </div>
 
-          {/* Right Side - Search and Login */}
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center bg-gray-100 rounded px-3 py-1.5">
-              <Search size={16} className="text-gray-500 mr-2" />
-              <input
-                type="text"
-                placeholder="Search"
-                className="bg-transparent border-none outline-none text-sm w-32 lg:w-48"
-              />
-            </div>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="theme-toggle inline-flex h-9 w-9 items-center justify-center rounded border border-gray-300 bg-white text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1a56db]/40"
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {isDark ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}
-            </button>
-            <Link
-              to="/admin/login"
-              className="flex items-center gap-1 text-sm text-gray-700 hover:text-blue-700 transition"
-            >
-              <User size={18} />
-              <span className="hidden md:inline">Admin</span>
-            </Link>
-          </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <label className="linear-search hidden h-8 items-center gap-2 border border-black/10 bg-white px-2.5 text-zinc-500 md:flex">
+            <Search size={14} aria-hidden />
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-28 border-0 bg-transparent text-xs text-zinc-800 outline-none placeholder:text-zinc-400 lg:w-40"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-toggle inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 shadow-sm transition hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-[#5E6AD2]/40"
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}
+          </button>
+          <Link
+            to="/admin/login"
+            className="terminal-nav-item hidden items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950 sm:flex"
+          >
+            <User size={16} aria-hidden />
+            <span>Admin</span>
+          </Link>
+          <button
+            className="inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 transition hover:bg-zinc-50 lg:hidden"
+            onClick={handleMenuToggle}
+            aria-label={isOpen ? "Close menu" : "Toggle menu"}
+          >
+            {isOpen ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
+          </button>
         </div>
       </div>
 
-      {/* Main Navigation Bar */}
-      <nav className="bg-[#1a56db] shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-12">
-            {/* Year Selector */}
+      <nav className="border-t border-black/[0.06] bg-white">
+        <div className="mx-auto flex h-9 max-w-7xl items-center justify-between gap-2 px-6">
+          <div className="relative dropdown">
+            <button
+              onClick={() => {
+                setYearOpen(!yearOpen);
+                setCommitteeOpen(false);
+                setSessionsOpen(false);
+              }}
+              className="terminal-nav-item flex items-center gap-0.5 border border-black/[0.06] bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-950 whitespace-nowrap"
+            >
+              Select Year (2026)
+              <ChevronDown size={12} className={`transition-transform ${yearOpen ? "rotate-180" : ""}`} />
+            </button>
+              {yearOpen && (
+              <div className="linear-dropdown absolute left-0 mt-1 w-44 overflow-hidden border border-black/[0.06] bg-white shadow-2xl">
+                <ul className="py-0.5">
+                  <li className="px-3 py-1.5 text-xs text-zinc-700 hover:bg-black/[0.04] cursor-pointer">2026</li>
+                  <li className="px-3 py-1.5 text-xs text-zinc-400 cursor-not-allowed">2025</li>
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="hidden items-center gap-0.5 lg:flex">
+            <Link to="/" className={navLinkClass}>Home</Link>
+            <Link to="/about" className={navLinkClass}>About</Link>
+            <Link to="/call-for-papers" className={navLinkClass}>Call For Papers</Link>
+
             <div className="relative dropdown">
               <button
                 onClick={() => {
-                  setYearOpen(!yearOpen);
-                  setCommitteeOpen(false);
+                  setCommitteeOpen(!committeeOpen);
                   setSessionsOpen(false);
                 }}
-                className="flex items-center gap-1 bg-[#1e4a8a] text-white px-4 py-2 rounded text-sm font-medium hover:bg-[#1a3d6e] transition"
+                className={`${navLinkClass} flex items-center gap-0.5`}
               >
-                Select Year (2026)
-                <ChevronDown size={14} className={`transition-transform ${yearOpen ? "rotate-180" : ""}`} />
+                Committee
+                <ChevronDown size={12} className={`transition-transform ${committeeOpen ? "rotate-180" : ""}`} />
               </button>
-              {yearOpen && (
-                <div className="absolute left-0 mt-2 bg-white shadow-lg rounded w-48 z-50">
-                  <ul className="py-1">
-                    <li className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">2026</li>
-                    <li className="px-4 py-2 text-sm text-gray-400 cursor-not-allowed">2025</li>
+              {committeeOpen && (
+                <div className="linear-dropdown absolute left-0 mt-1 w-52 overflow-hidden border border-black/[0.06] bg-white shadow-2xl">
+                  <ul className="py-0.5">
+                    {committeeItems.map((item) => (
+                      <li key={item.path}>
+                        <Link
+                          to={item.path}
+                          onClick={() => setCommitteeOpen(false)}
+                          className="block px-3 py-1.5 text-xs text-zinc-700 transition hover:bg-black/[0.04] hover:text-zinc-950"
+                        >
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1">
-              {/* Home */}
-              <Link
-                to="/"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
+            <Link to="/schedule" className={navLinkClass}>Schedule</Link>
+
+            <div className="relative dropdown">
+              <button
+                onClick={() => {
+                  setSessionsOpen(!sessionsOpen);
+                  setCommitteeOpen(false);
+                }}
+                className={`${navLinkClass} flex items-center gap-0.5`}
               >
-                Home
-              </Link>
-
-              {/* About */}
-              <Link
-                to="/about"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                About
-              </Link>
-
-              {/* Call For Papers */}
-              <Link
-                to="/call-for-papers"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Call For Papers
-              </Link>
-
-              {/* Committee Dropdown */}
-              <div className="relative dropdown">
-                <button
-                  onClick={() => {
-                    setCommitteeOpen(!committeeOpen);
-                    setSessionsOpen(false);
-                  }}
-                  className="flex items-center gap-1 text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-                >
-                  Committee
-                  <ChevronDown size={14} className={`transition-transform ${committeeOpen ? "rotate-180" : ""}`} />
-                </button>
-                {committeeOpen && (
-                  <div className="absolute left-0 mt-2 bg-white shadow-lg rounded w-56 z-50">
-                    <ul className="py-1">
-                      {committeeItems.map((item, idx) => (
-                        <li key={idx}>
-                          <Link
-                            to={item.path}
-                            onClick={() => setCommitteeOpen(false)}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* Schedule */}
-              <Link
-                to="/schedule"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Schedule
-              </Link>
-
-              {/* Sessions Dropdown */}
-              <div className="relative dropdown">
-                <button
-                  onClick={() => {
-                    setSessionsOpen(!sessionsOpen);
-                    setCommitteeOpen(false);
-                  }}
-                  className="flex items-center gap-1 text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-                >
-                  Sessions
-                  <ChevronDown size={14} className={`transition-transform ${sessionsOpen ? "rotate-180" : ""}`} />
-                </button>
-                {sessionsOpen && (
-                  <div className="absolute left-0 mt-2 bg-white shadow-lg rounded w-56 z-50">
-                    <ul className="py-1">
-                      {sessionsItems.map((item, idx) => (
-                        <li key={idx}>
-                          <Link
-                            to={item.path}
-                            onClick={() => setSessionsOpen(false)}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* Speakers */}
-              <Link
-                to="/KeyNotes"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Speakers
-              </Link>
-
-              {/* Sponsors */}
-              <Link
-                to="/sponsors"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Sponsors
-              </Link>
-
-              {/* Registration */}
-              <Link
-                to="/registration"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Registration
-              </Link>
-
-              {/* Contact */}
-              <Link
-                to="/contact"
-                className="text-white px-3 py-2 text-sm hover:bg-[#1e4a8a] transition rounded"
-              >
-                Contact
-              </Link>
+                Sessions
+                <ChevronDown size={12} className={`transition-transform ${sessionsOpen ? "rotate-180" : ""}`} />
+              </button>
+              {sessionsOpen && (
+                <div className="linear-dropdown absolute left-0 mt-1 w-52 overflow-hidden border border-black/[0.06] bg-white shadow-2xl">
+                  <ul className="py-0.5">
+                    {sessionsItems.map((item) => (
+                      <li key={item.path}>
+                        <Link
+                          to={item.path}
+                          onClick={() => setSessionsOpen(false)}
+                          className="block px-3 py-1.5 text-xs text-zinc-700 transition hover:bg-black/[0.04] hover:text-zinc-950"
+                        >
+                          {item.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
-            {/* Mobile Hamburger */}
-            <button
-              className="lg:hidden text-white hover:text-gray-200 transition-colors"
-              onClick={handleMenuToggle}
-              aria-label="Toggle menu"
-            >
-              <div className="relative w-6 h-5 flex flex-col justify-between">
-                <span 
-                  className={`block h-0.5 w-full bg-current transform transition-all duration-300 ease-in-out ${
-                    isOpen ? 'rotate-45 translate-y-2' : ''
-                  }`}
-                />
-                <span 
-                  className={`block h-0.5 w-full bg-current transition-all duration-300 ease-in-out ${
-                    isOpen ? 'opacity-0' : 'opacity-100'
-                  }`}
-                />
-                <span 
-                  className={`block h-0.5 w-full bg-current transform transition-all duration-300 ease-in-out ${
-                    isOpen ? '-rotate-45 -translate-y-2' : ''
-                  }`}
-                />
-              </div>
-            </button>
+            <Link to="/KeyNotes" className={navLinkClass}>Speakers</Link>
+            <Link to="/sponsors" className={navLinkClass}>Sponsors</Link>
+            <Link to="/registration" className="terminal-nav-item bg-[#5E6AD2] px-2 py-1.5 text-xs font-semibold text-white shadow-[0_12px_26px_rgba(94,106,210,0.22)] transition hover:bg-[#6f7af0] whitespace-nowrap">
+              Registration
+            </Link>
+            <Link to="/contact" className={navLinkClass}>Contact</Link>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isOpen && (
-          <div className={`lg:hidden bg-white border-t border-gray-200 max-h-[calc(100vh-120px)] overflow-y-auto ${
-            isClosing ? 'animate-slideUp' : 'animate-slideDown'
-          }`}>
-            <div className="px-4 py-2 space-y-1">
-              <Link to="/" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Home
-              </Link>
-              <Link to="/about" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                About
-              </Link>
-              <Link to="/call-for-papers" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Call For Papers
-              </Link>
-              
-              {/* Committee Dropdown */}
+          <div
+            className={`linear-mobile-menu lg:hidden max-h-[calc(100vh-128px)] overflow-y-auto border-t border-black/[0.06] bg-white ${
+              isClosing ? "animate-slideUp" : "animate-slideDown"
+            }`}
+          >
+            <div className="space-y-1 px-6 py-3">
+              <label className="linear-search mb-3 flex h-8 items-center gap-2 border border-black/10 bg-white px-2.5 text-zinc-500 md:hidden">
+                <Search size={14} aria-hidden />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full border-0 bg-transparent text-xs text-zinc-800 outline-none placeholder:text-zinc-400"
+                />
+              </label>
+              <Link to="/" onClick={handleMenuToggle} className={mobileLinkClass}>Home</Link>
+              <Link to="/about" onClick={handleMenuToggle} className={mobileLinkClass}>About</Link>
+              <Link to="/call-for-papers" onClick={handleMenuToggle} className={mobileLinkClass}>Call For Papers</Link>
+
               <div>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setCommitteeOpen(!committeeOpen);
                   }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950"
                 >
                   Committee
                   <ChevronDown size={14} className={`transition-transform ${committeeOpen ? "rotate-180" : ""}`} />
                 </button>
                 {committeeOpen && (
-                  <div className="pl-4 mt-1">
-                    {committeeItems.map((item, idx) => (
+                  <div className="mt-1 pl-4">
+                    {committeeItems.map((item) => (
                       <Link
-                        key={idx}
+                        key={item.path}
                         to={item.path}
                         onClick={() => {
                           setCommitteeOpen(false);
                           handleMenuToggle();
                         }}
-                        className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                        className="block px-3 py-2 text-sm text-zinc-500 transition hover:bg-black/[0.04] hover:text-zinc-950"
                       >
                         {item.name}
                       </Link>
@@ -335,33 +258,30 @@ function Navbar() {
                 )}
               </div>
 
-              <Link to="/schedule" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Schedule
-              </Link>
+              <Link to="/schedule" onClick={handleMenuToggle} className={mobileLinkClass}>Schedule</Link>
 
-              {/* Sessions Dropdown */}
               <div>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setSessionsOpen(!sessionsOpen);
                   }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950"
                 >
                   Sessions
                   <ChevronDown size={14} className={`transition-transform ${sessionsOpen ? "rotate-180" : ""}`} />
                 </button>
                 {sessionsOpen && (
-                  <div className="pl-4 mt-1">
-                    {sessionsItems.map((item, idx) => (
+                  <div className="mt-1 pl-4">
+                    {sessionsItems.map((item) => (
                       <Link
-                        key={idx}
+                        key={item.path}
                         to={item.path}
                         onClick={() => {
                           setSessionsOpen(false);
                           handleMenuToggle();
                         }}
-                        className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                        className="block px-3 py-2 text-sm text-zinc-500 transition hover:bg-black/[0.04] hover:text-zinc-950"
                       >
                         {item.name}
                       </Link>
@@ -370,22 +290,19 @@ function Navbar() {
                 )}
               </div>
 
-              <Link to="/KeyNotes" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Speakers
-              </Link>
-              <Link to="/sponsors" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Sponsors
-              </Link>
-              <Link to="/registration" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
+              <Link to="/KeyNotes" onClick={handleMenuToggle} className={mobileLinkClass}>Speakers</Link>
+              <Link to="/sponsors" onClick={handleMenuToggle} className={mobileLinkClass}>Sponsors</Link>
+              <Link to="/registration" onClick={handleMenuToggle} className="block bg-[#5E6AD2] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#6f7af0]">
                 Registration
               </Link>
-              <Link to="/contact" onClick={handleMenuToggle} className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">
-                Contact
+              <Link to="/contact" onClick={handleMenuToggle} className={mobileLinkClass}>Contact</Link>
+              <Link to="/admin/login" onClick={handleMenuToggle} className={`${mobileLinkClass} sm:hidden`}>
+                Admin
               </Link>
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="theme-toggle mt-2 flex w-full items-center justify-between rounded border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                className="theme-toggle mt-2 flex w-full items-center justify-between border border-black/10 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
                 <span>{isDark ? "Light mode" : "Dark mode"}</span>
@@ -395,7 +312,7 @@ function Navbar() {
           </div>
         )}
       </nav>
-    </>
+    </header>
   );
 }
 

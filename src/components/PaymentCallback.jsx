@@ -168,13 +168,13 @@ function PaymentCallback() {
     return () => {
       cancelled = true;
     };
-  }, [location.search, location.hash, completeRegistration]);
+  }, [location, completeRegistration]);
 
   const accent =
     status === "success" ? "bg-[#16a34a]" : status === "error" ? "bg-red-600" : "bg-[#1a56db]";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f0f2f5]">
+    <div className="app-shell min-h-screen flex flex-col">
       <Navbar />
 
       <main className="flex-1 flex flex-col px-4 sm:px-6 py-10 sm:py-14">
