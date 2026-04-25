@@ -46,18 +46,20 @@ function CallForPapers() {
               <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#E8A020] border-2 border-black dark:border-zinc-900 mt-0.5 z-10"></div>
               <span>It is mandatory to use Mendeley software for referencing in the manuscript</span>
             </li>
-            <li className="relative flex gap-3 mt-4">
-              <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a] border-2 border-black dark:border-zinc-900 mt-0.5 z-10"></div>
-              <a
-                href={cmtUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-[#5E6AD2] dark:text-[#c9a86a] font-semibold hover:underline"
-              >
-                Submit your paper via Microsoft CMT
-                <ExternalLink size={14} />
-              </a>
-            </li>
+            {!meta.pastEvent && (
+              <li className="relative flex gap-3 mt-4">
+                <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a] border-2 border-black dark:border-zinc-900 mt-0.5 z-10"></div>
+                <a
+                  href={cmtUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-[#5E6AD2] dark:text-[#c9a86a] font-semibold hover:underline"
+                >
+                  Submit your paper via Microsoft CMT
+                  <ExternalLink size={14} />
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       ),
@@ -175,18 +177,27 @@ function CallForPapers() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#5E6AD2] dark:text-[#c9a86a]">Call For Papers</p>
             <h3 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-zinc-100">Paper Submission</h3>
             <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-400">
-              Authors are invited to submit original, unpublished research aligned with the conference tracks.
+              {meta.pastEvent 
+                ? "Submission for this conference has ended. The event took place on " + meta.dates + "."
+                : "Authors are invited to submit original, unpublished research aligned with the conference tracks."}
             </p>
           </div>
-          <a
-            href={cmtUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="linear-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-sm"
-          >
-            Submit Paper via Microsoft CMT
-            <ExternalLink size={16} />
-          </a>
+          {meta.pastEvent ? (
+            <div className="linear-primary opacity-60 inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-sm cursor-not-allowed">
+              Submission Closed
+              <Shield size={16} />
+            </div>
+          ) : (
+            <a
+              href={cmtUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="linear-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-sm"
+            >
+              Submit Paper via Microsoft CMT
+              <ExternalLink size={16} />
+            </a>
+          )}
         </div>
       </div>
 

@@ -17,7 +17,7 @@ const conferenceData = {
       collaborationUrl: "https://www.ai-research-lab.org/",
       cmt: "https://cmt3.research.microsoft.com/AAI2024",
       email: "appliedaiconf@gmail.com",
-      pastEvent: false,
+      pastEvent: true,
     },
     hero: {
       badge: "Shoolini University & 2AI Research Lab | Flagship Hybrid Conference",
