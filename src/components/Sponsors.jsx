@@ -14,16 +14,16 @@ function Sponsors() {
         title="Sponsors"
         subtitle={`Partnership opportunities for the ${selectedYear} International Conference on Applied Artificial Intelligence`}
       >
-        <div className="bg-white rounded shadow-sm p-12">
+        <div className="linear-card p-12">
           <div className="flex flex-col items-center justify-center text-center min-h-[400px]">
-            <Sparkles size={64} className="text-yellow-500 mb-6" />
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            <Sparkles size={64} className="text-[#c9a86a] mb-6" />
+            <h2 className="text-3xl font-bold text-zinc-950 dark:text-zinc-100 mb-4">
               Sponsorship Opportunities
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mb-6">
+            <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mb-6">
               We are working on creating exciting sponsorship packages for partners, organizations, and companies who want to be part of our conference.
             </p>
-            <div className="inline-block bg-yellow-100 border border-yellow-300 text-yellow-800 font-medium px-6 py-3 rounded shadow-sm">
+            <div className="inline-block bg-[#c9a86a]/10 border border-[#c9a86a]/30 text-[#c9a86a] font-medium px-6 py-3 rounded shadow-sm">
               Details will be announced soon
             </div>
           </div>
@@ -33,7 +33,7 @@ function Sponsors() {
   }
 
   const getTierIcon = (tierName) => {
-    if (tierName.includes("Platinum")) return <Trophy className="text-[#E5E4E2]" size={32} />;
+    if (tierName.includes("Platinum")) return <Trophy className="text-[#E5E4E2] dark:text-zinc-300" size={32} />;
     if (tierName.includes("Gold")) return <Medal className="text-[#FFD700]" size={32} />;
     if (tierName.includes("Silver")) return <Award className="text-[#C0C0C0]" size={32} />;
     return <Shield className="text-[#CD7F32]" size={32} />;
@@ -48,23 +48,23 @@ function Sponsors() {
         {/* Tier Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {sponsorsData.tiers.map((tier, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-              <div className="p-6 text-center border-b border-gray-50 bg-gray-50/50">
-                <div className="flex justify-center mb-4">
+            <div key={idx} className="linear-card group overflow-hidden flex flex-col hover:border-[#c9a86a]/40 transition-all">
+              <div className="p-6 text-center border-b border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]">
+                <div className="flex justify-center mb-4 transition-transform group-hover:scale-110">
                   {getTierIcon(tier.name)}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800">{tier.name}</h3>
-                <p className="text-2xl font-black text-[#c9a86a] mt-2">{tier.amount}</p>
+                <h3 className="text-xl font-bold text-zinc-950 dark:text-zinc-100">{tier.name}</h3>
+                <p className="text-2xl font-black text-[#c9a86a] mt-2 tracking-tight">{tier.amount}</p>
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Available Slots</span>
-                    <span className="font-bold text-gray-800 bg-gray-100 px-2 py-0.5 rounded-full">{tier.slots}</span>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500 dark:text-zinc-400">Available Slots</span>
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100 bg-black/5 dark:bg-white/10 px-2 py-0.5">{tier.slots}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Free Passes</span>
-                    <span className="font-bold text-gray-800">{tier.benefits["Conference passes"]}</span>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-zinc-500 dark:text-zinc-400">Free Passes</span>
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100">{tier.benefits["Conference passes"]}</span>
                   </div>
                 </div>
               </div>
@@ -73,37 +73,37 @@ function Sponsors() {
         </div>
 
         {/* Benefits Comparison Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-800">Benefit Matrix</h2>
-            <p className="text-sm text-gray-500 mt-1">Detailed comparison across all sponsorship tiers</p>
+        <div className="linear-card overflow-hidden">
+          <div className="p-6 border-b border-black/5 dark:border-white/5">
+            <h2 className="text-2xl font-bold text-zinc-950 dark:text-zinc-100">Benefit Matrix</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Detailed comparison across all sponsorship tiers</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
-                <tr className="bg-gray-50 text-xs font-bold uppercase tracking-wider text-gray-600">
-                  <th className="px-6 py-4 border-b">Benefit</th>
+                <tr className="bg-black/[0.02] dark:bg-white/[0.02] text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+                  <th className="px-6 py-4 border-b border-black/5 dark:border-white/5">Benefit</th>
                   {sponsorsData.tiers.map(t => (
-                    <th key={t.name} className="px-6 py-4 border-b text-center">{t.name.split(" ")[0]}</th>
+                    <th key={t.name} className="px-6 py-4 border-b border-black/5 dark:border-white/5 text-center">{t.name.split(" ")[0]}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-sm">
+              <tbody className="divide-y divide-black/5 dark:divide-white/5 text-sm">
                 {sponsorsData.benefitList.map((benefit) => (
-                  <tr key={benefit} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-700">{benefit}</td>
+                  <tr key={benefit} className="hover:bg-black/[0.01] dark:hover:bg-white/[0.01] transition-colors">
+                    <td className="px-6 py-4 font-medium text-zinc-700 dark:text-zinc-300">{benefit}</td>
                     {sponsorsData.tiers.map(tier => {
                       const value = tier.benefits[benefit];
                       return (
                         <td key={tier.name} className="px-6 py-4 text-center">
                           {typeof value === "boolean" ? (
                             value ? (
-                              <Check className="mx-auto text-green-500" size={18} />
+                              <Check className="mx-auto text-green-600 dark:text-green-400" size={18} />
                             ) : (
-                              <X className="mx-auto text-gray-300" size={18} />
+                              <X className="mx-auto text-zinc-300 dark:text-zinc-700" size={18} />
                             )
                           ) : (
-                            <span className="font-bold text-gray-800">{value}</span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100">{value}</span>
                           )}
                         </td>
                       );
@@ -115,14 +115,14 @@ function Sponsors() {
           </div>
         </div>
 
-        <div className="bg-[#c9a86a]/10 border border-[#c9a86a]/20 rounded-xl p-8 text-center">
-          <h3 className="text-xl font-bold text-gray-800 mb-2">Interested in Partnering?</h3>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+        <div className="bg-[#c9a86a]/10 border border-[#c9a86a]/20 p-8 text-center">
+          <h3 className="text-xl font-bold text-zinc-950 dark:text-zinc-100 mb-2 uppercase tracking-wide">Interested in Partnering?</h3>
+          <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-6">
             For more details on sponsorship opportunities, please contact the organizing committee at <span className="font-bold text-[#c9a86a]">appliedaiconf@gmail.com</span>
           </p>
           <a 
             href="mailto:appliedaiconf@gmail.com"
-            className="inline-flex items-center gap-2 bg-[#c9a86a] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#b8975a] transition-all shadow-lg shadow-[#c9a86a]/20"
+            className="inline-flex items-center gap-2 bg-[#c9a86a] text-zinc-950 px-8 py-3 font-bold hover:bg-[#b8975a] transition-all shadow-xl shadow-[#c9a86a]/10 uppercase tracking-widest text-xs"
           >
             Contact for Sponsorship
           </a>
