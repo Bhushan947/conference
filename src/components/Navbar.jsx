@@ -15,6 +15,52 @@ function Navbar() {
   const [sessionsOpen, setSessionsOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
   const { selectedYear, setSelectedYear } = useYear();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const q = searchQuery.toLowerCase();
+    const data = conferenceData[selectedYear];
+    const results = [];
+
+    if (!data) return;
+
+    // Search Speakers
+    data.keynoteSpeakers?.forEach(s => {
+      if (s.name.toLowerCase().includes(q) || s.org.toLowerCase().includes(q)) {
+        results.push({ type: "Speaker", title: s.name, subtitle: s.org, link: "/KeyNotes" });
+      }
+    });
+
+    // Search Themes
+    data.themes?.forEach(t => {
+      if (t.name.toLowerCase().includes(q)) {
+        results.push({ type: "Theme", title: t.name, subtitle: "Conference Track", link: "/" });
+      }
+    });
+
+    // Search Sessions
+    data.workshops?.items?.forEach(w => {
+      if (w.title.toLowerCase().includes(q) || w.speaker?.toLowerCase().includes(q)) {
+        results.push({ type: "Workshop", title: w.title, subtitle: w.speaker, link: "/sessions/workshops" });
+      }
+    });
+
+    // Search Committee (hardcoded in data)
+    data.committee?.steeringCommittee?.forEach(m => {
+      if (m.name.toLowerCase().includes(q)) {
+        results.push({ type: "Committee", title: m.name, subtitle: "Steering Committee", link: "/committee/SteeringCommitte" });
+      }
+    });
+
+    setSearchResults(results.slice(0, 8));
+  }, [searchQuery, selectedYear]);
 
   const committeeItems = [
     { name: "Steering Committee", path: "/committee/SteeringCommitte" },
@@ -78,14 +124,52 @@ function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <label className="linear-search hidden h-8 items-center gap-2 border border-black/10 bg-white px-2.5 text-zinc-500 md:flex">
-            <Search size={14} aria-hidden />
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-28 border-0 bg-transparent text-xs text-zinc-800 outline-none placeholder:text-zinc-400 lg:w-40"
-            />
-          </label>
+          <div className="relative hidden md:block">
+            <label className={`linear-search flex h-8 items-center gap-2 border bg-white px-2.5 text-zinc-500 transition-all ${
+              isSearchFocused ? "border-[#5E6AD2] ring-2 ring-[#5E6AD2]/10 w-64" : "border-black/10 w-44 lg:w-52"
+            }`}>
+              <Search size={14} aria-hidden />
+              <input
+                type="text"
+                placeholder="Search conference..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                className="w-full border-0 bg-transparent text-xs text-zinc-800 outline-none placeholder:text-zinc-400"
+              />
+            </label>
+
+            {isSearchFocused && searchResults.length > 0 && (
+              <div className="linear-dropdown absolute right-0 mt-2 w-72 overflow-hidden border border-black/[0.06] bg-white shadow-2xl">
+                <div className="px-3 py-2 border-b border-black/5 bg-zinc-50/50">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Search Results</p>
+                </div>
+                <ul className="py-1 max-h-80 overflow-y-auto">
+                  {searchResults.map((result, idx) => (
+                    <li key={idx}>
+                      <Link
+                        to={result.link}
+                        onClick={() => {
+                          setSearchQuery("");
+                          setIsSearchFocused(false);
+                        }}
+                        className="flex flex-col px-3 py-2 transition hover:bg-black/[0.04]"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-zinc-900 line-clamp-1">{result.title}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-tighter px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-500">
+                            {result.type}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-zinc-500 line-clamp-1 mt-0.5">{result.subtitle}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             onClick={toggleTheme}
