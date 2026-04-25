@@ -616,7 +616,7 @@ in AI`}
               lineHeight: 1.4,
             }}>
               Official registration confirmation · 2nd International Conference on Advances in AI (2AI-2026) ·{" "}
-              <a href="mailto:info@2aiconference.com" style={{ color: "#777" }}>info@2aiconference.com</a>
+              <a href="mailto:aaiconferences@gmail.com" style={{ color: "#777" }}>aaiconferences@gmail.com</a>
             </p>
           </div>
 

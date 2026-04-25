@@ -58,85 +58,97 @@ function About() {
       title="About 2AI Conference 2026"
       subtitle="Learn more about the conference, venue, and organizers"
     >
-      {/* Conference Info Banner */}
-      <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded mb-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">
-          2026 International Conference on Applied Artificial Intelligence (2AI)
-        </h2>
-        <p className="text-gray-700 mb-1">
-          <span className="font-semibold">Date:</span> June 17 - 19, 2026 (Hybrid Mode)
-        </p>
-        <p className="text-gray-700 mb-1">
-          <span className="font-semibold">Venue:</span>{" "}
-          <a
-            href="https://www.cukashmir.ac.in/"
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline hover:text-blue-800"
-          >
-            Central University of Kashmir, India
-          </a>
-        </p>
-        <p className="text-gray-700">
-          <span className="font-semibold">In collaboration with:</span>{" "}
-          <a
-            href="https://www.ai-research-lab.org/"
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-600 underline hover:text-blue-800"
-          >
-            USD AI Research, University of South Dakota (USA)
-          </a>
-        </p>
-      </div>
+      <section className="linear-card overflow-hidden p-0">
+        <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="p-6 md:p-8">
+            <p className="text-sm font-semibold uppercase text-[#5E6AD2] dark:text-[#c9a86a]">
+              Conference Overview
+            </p>
+            <h2 className="mt-3 max-w-3xl text-2xl font-bold leading-tight text-zinc-950 dark:text-zinc-100 md:text-4xl">
+              2026 International Conference on Applied Artificial Intelligence (2AI)
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-600 dark:text-zinc-400">
+              A three-day flagship academic event hosted by Central University of Kashmir in collaboration with USD AI Research, bringing together researchers, students, and industry professionals working across applied artificial intelligence.
+            </p>
+          </div>
 
-      {/* Sections */}
-      <div className="space-y-8">
+          <div 
+            className="grid border-t border-black/[0.1] dark:border-white/10 p-6 md:grid-cols-3 lg:border-l lg:border-t-0 lg:grid-cols-1 !bg-white dark:!bg-black/20"
+          >
+            <div className="border-b border-black/[0.1] dark:border-white/10 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-4 lg:border-b lg:border-r-0 lg:pb-4 lg:pr-0">
+              <p className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">Date</p>
+              <p className="mt-1 text-sm font-bold text-zinc-950 dark:text-zinc-100">June 17 - 19, 2026</p>
+              <p className="mt-1 text-xs text-zinc-700 dark:text-zinc-400">Hybrid Mode</p>
+            </div>
+            <div className="border-b border-black/[0.1] dark:border-white/10 py-4 md:border-b-0 md:border-r md:px-4 md:py-0 lg:border-b lg:border-r-0 lg:px-0 lg:py-4">
+              <p className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">Venue</p>
+              <a
+                href="https://www.cukashmir.ac.in/"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 block text-sm font-bold text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
+              >
+                Central University of Kashmir, India
+              </a>
+            </div>
+            <div className="pt-4 md:pl-4 md:pt-0 lg:pl-0 lg:pt-4">
+              <p className="text-xs font-semibold uppercase text-zinc-600 dark:text-zinc-400">Collaboration</p>
+              <a
+                href="https://www.ai-research-lab.org/"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 block text-sm font-bold text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
+              >
+                USD AI Research, University of South Dakota (USA)
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-8 space-y-6">
         {sections.map((section, idx) => {
           const isEven = idx % 2 === 0;
           return (
-            <div
-              key={idx}
-              className="bg-white rounded shadow-sm p-6"
-            >
+            <article key={section.title} className="linear-card overflow-hidden p-0">
               <div
-                className={`flex flex-col ${
-                  isEven ? "md:flex-row" : "md:flex-row-reverse"
-                } gap-6 items-start`}
+                className={`grid gap-0 ${
+                  isEven ? "lg:grid-cols-[0.92fr_1.08fr]" : "lg:grid-cols-[1.08fr_0.92fr]"
+                }`}
               >
-                {/* Image */}
-                <div className="md:w-1/2 w-full flex-shrink-0">
+                <div className={`${isEven ? "" : "lg:order-2"} h-72 lg:h-full`}>
                   <img
                     src={section.image}
                     alt={section.title}
-                    className="w-full h-64 md:h-80 rounded object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
 
-                {/* Text */}
-                <div className="md:w-1/2 w-full">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                <div className="p-6 md:p-8">
+                  <p className="text-xs font-semibold uppercase text-zinc-400">
+                    {String(idx + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-zinc-100">
                     {section.title}
                   </h3>
-                  <p className="text-gray-700 text-base leading-relaxed whitespace-pre-line">
+                  <div className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
                     {section.text}
-                  </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>
 
-      {/* Microsoft CMT Service Note */}
-      <div className="mt-8 bg-blue-100 border-l-4 border-blue-600 p-6 rounded shadow-sm">
-        <p className="text-gray-800 text-base leading-relaxed">
+      <section className="linear-card mt-8 border-l-4 border-[#5E6AD2] dark:border-[#c9a86a] p-6">
+        <p className="text-base leading-7 text-zinc-700 dark:text-zinc-300">
           The Microsoft CMT service was used for managing the peer-reviewing
           process for this conference. This service was provided for free by
           Microsoft and they bore all expenses, including costs for Azure
           cloud services as well as for software development and support.
         </p>
-      </div>
+      </section>
     </PageLayout>
   );
 }

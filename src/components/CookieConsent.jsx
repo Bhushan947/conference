@@ -102,7 +102,7 @@ export default function CookieConsent() {
         role="region"
         aria-label="Cookie consent"
       >
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center gap-4 md:gap-6 px-6">
           <div className="flex-1 text-sm text-gray-700 leading-relaxed">
             <p className="font-semibold text-gray-900 mb-1">We value your privacy</p>
             <p>
