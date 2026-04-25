@@ -74,7 +74,7 @@ function Contact() {
                 height="300"
                 allowFullScreen=""
                 loading="lazy"
-                className="rounded border border-black/[0.06] dark:border-white/10"
+                className="rounded-lg border border-gray-300 dark:border-zinc-700"
               ></iframe>
             </a>
           </div>
@@ -86,9 +86,9 @@ function Contact() {
             Send Us Your Feedback
           </h3>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
+              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-1">
                 Name
               </label>
               <input
@@ -99,13 +99,12 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="Your Name"
-                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-                style={{ backgroundColor: 'transparent' }}
+                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
               />
             </div>
             
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-1">
                 Email
               </label>
               <input
@@ -116,13 +115,12 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="your.email@example.com"
-                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-                style={{ backgroundColor: 'transparent' }}
+                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
               />
             </div>
             
             <div>
-              <label htmlFor="feedback" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
+              <label htmlFor="feedback" className="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-1">
                 Feedback
               </label>
               <textarea
@@ -133,14 +131,13 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="Share your thoughts, suggestions, or questions..."
-                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
-                style={{ backgroundColor: 'transparent' }}
+                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
               ></textarea>
             </div>
             
             <button
               type="submit"
-              className="w-full bg-[#5E6AD2] dark:bg-[#c9a86a] hover:bg-[#4a52b5] dark:hover:bg-[#b8935a] text-white dark:text-zinc-950 font-semibold px-6 py-3 rounded transition flex items-center justify-center gap-2 shadow-sm"
+              className="w-full bg-[#5E6AD2] dark:bg-[#c9a86a] hover:bg-[#4a52b5] dark:hover:bg-[#b8935a] text-white dark:text-zinc-950 font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
             >
               <Send size={18} />
               Send Feedback
