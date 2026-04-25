@@ -31,19 +31,19 @@ function Contact() {
       <div className="grid gap-6 md:grid-cols-2">
         
         {/* Contact Information */}
-        <div className="bg-white rounded shadow-sm p-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">
+        <div className="linear-card p-6">
+          <h3 className="text-2xl font-bold text-zinc-950 dark:text-zinc-100 mb-6">
             Contact Information
           </h3>
           
           <div className="space-y-4 mb-6">
             <div className="flex items-start gap-3">
-              <Mail size={20} className="text-blue-600 flex-shrink-0 mt-1" />
+              <Mail size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold text-gray-800">Email</p>
+                <p className="font-semibold text-zinc-950 dark:text-zinc-100">Email</p>
                 <a
                   href="mailto:aaiconferences@gmail.com"
-                  className="text-blue-600 hover:underline"
+                  className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
                 >
                   aaiconferences@gmail.com
                 </a>
@@ -51,10 +51,10 @@ function Contact() {
             </div>
             
             <div className="flex items-start gap-3">
-              <MapPin size={20} className="text-blue-600 flex-shrink-0 mt-1" />
+              <MapPin size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold text-gray-800">Location</p>
-                <p className="text-gray-700">Central University of Kashmir, India</p>
+                <p className="font-semibold text-zinc-950 dark:text-zinc-100">Location</p>
+                <p className="text-zinc-700 dark:text-zinc-400">Central University of Kashmir, India</p>
               </div>
             </div>
           </div>
@@ -74,21 +74,21 @@ function Contact() {
                 height="300"
                 allowFullScreen=""
                 loading="lazy"
-                className="rounded border border-gray-300"
+                className="rounded border border-black/[0.06] dark:border-white/10"
               ></iframe>
             </a>
           </div>
         </div>
 
         {/* Feedback Form */}
-        <div className="bg-white rounded shadow-sm p-6">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">
+        <div className="linear-card p-6">
+          <h3 className="text-2xl font-bold text-zinc-950 dark:text-zinc-100 mb-6">
             Send Us Your Feedback
           </h3>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
                 Name
               </label>
               <input
@@ -98,12 +98,14 @@ function Contact() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                placeholder="Your Name"
+                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                style={{ backgroundColor: 'transparent' }}
               />
             </div>
             
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
                 Email
               </label>
               <input
@@ -113,12 +115,14 @@ function Contact() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                placeholder="your.email@example.com"
+                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                style={{ backgroundColor: 'transparent' }}
               />
             </div>
             
             <div>
-              <label htmlFor="feedback" className="block text-sm font-semibold text-gray-700 mb-1">
+              <label htmlFor="feedback" className="block text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-1">
                 Feedback
               </label>
               <textarea
@@ -128,13 +132,15 @@ function Contact() {
                 value={formData.feedback}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                placeholder="Share your thoughts, suggestions, or questions..."
+                className="w-full p-3 border-2 border-gray-300 dark:border-zinc-600 rounded focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none transition placeholder:text-zinc-400 dark:placeholder:text-zinc-500"
+                style={{ backgroundColor: 'transparent' }}
               ></textarea>
             </div>
             
             <button
               type="submit"
-              className="w-full bg-[#007bff] hover:bg-[#0056b3] text-white font-semibold px-6 py-3 rounded transition flex items-center justify-center gap-2"
+              className="w-full bg-[#5E6AD2] dark:bg-[#c9a86a] hover:bg-[#4a52b5] dark:hover:bg-[#b8935a] text-white dark:text-zinc-950 font-semibold px-6 py-3 rounded transition flex items-center justify-center gap-2 shadow-sm"
             >
               <Send size={18} />
               Send Feedback
