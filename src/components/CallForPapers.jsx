@@ -4,10 +4,17 @@
 import PageLayout from "./PageLayout";
 import { FileText, Shield, Presentation, FileDown, ExternalLink } from "lucide-react";
 import { useTheme } from "../context/themeContext";
+import { useYear } from "../context/yearContext";
+import conferenceData from "../content/conferenceData";
 
 function CallForPapers() {
   const { isDark } = useTheme();
+  const { selectedYear } = useYear();
+  const is2024 = selectedYear === 2024;
+  const data = conferenceData[selectedYear];
+  const meta = data?.meta || conferenceData[2026].meta;
   const pdfUrl = `${import.meta.env.BASE_URL}copyright.pdf`;
+  const cmtUrl = meta.cmt;
   const sections = [
     {
       id: 1,
@@ -42,7 +49,7 @@ function CallForPapers() {
             <li className="relative flex gap-3 mt-4">
               <div className="flex-shrink-0 w-4 h-4 rounded-full bg-[#5E6AD2] dark:bg-[#c9a86a] border-2 border-black dark:border-zinc-900 mt-0.5 z-10"></div>
               <a
-                href="https://cmt3.research.microsoft.com/AAI2026"
+                href={cmtUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1 text-[#5E6AD2] dark:text-[#c9a86a] font-semibold hover:underline"
@@ -158,7 +165,7 @@ function CallForPapers() {
   return (
     <PageLayout 
       title="Call For Papers"
-      subtitle="Submit your original research to the 2026 International Conference on Applied Artificial Intelligence"
+      subtitle={`Submit your original research to the ${selectedYear} International Conference on Applied Artificial Intelligence`}
     >
       <div className="linear-card mb-6 overflow-hidden p-0">
         <div className={`flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-8 ${
@@ -172,7 +179,7 @@ function CallForPapers() {
             </p>
           </div>
           <a
-            href="https://cmt3.research.microsoft.com/AAI2026"
+            href={cmtUrl}
             target="_blank"
             rel="noreferrer"
             className="linear-primary inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-2.5 text-sm"

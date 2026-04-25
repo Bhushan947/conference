@@ -3,9 +3,18 @@
 
 import { useState } from "react";
 import PageLayout from "./PageLayout";
-import { Mail, MapPin, Send } from "lucide-react";
+import { Mail, MapPin, Send, Phone, User } from "lucide-react";
+import { useYear } from "../context/yearContext";
+import conferenceData from "../content/conferenceData";
 
 function Contact() {
+  const { selectedYear } = useYear();
+  const is2024 = selectedYear === 2024;
+  const data = conferenceData[selectedYear];
+  const meta = data?.meta || conferenceData[2026].meta;
+
+  const contact2024 = is2024 ? data.contact : null;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +31,11 @@ function Contact() {
     alert("✅ Feedback sent successfully!");
     setFormData({ name: "", email: "", feedback: "" });
   };
+
+  const email = is2024 ? contact2024.email : "aaiconferences@gmail.com";
+  const location = is2024 ? contact2024.location : "Central University of Kashmir, India";
+  const mapSrc = is2024 ? contact2024.mapEmbed : "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3298.680615552739!2d74.72459227572418!3d34.23117257309002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e19d996de5015d%3A0x5cdc403498de0f0e!2sCentral%20University%20of%20Kashmir!5e0!3m2!1sen!2sin!4v1758301985418!5m2!1sen!2sin";
+  const mapLink = is2024 ? contact2024.mapLink : "https://maps.app.goo.gl/36i9dDJWYn9n3nRS7";
 
   return (
     <PageLayout 
@@ -42,11 +56,22 @@ function Contact() {
               <div>
                 <p className="font-semibold text-zinc-950 dark:text-zinc-100">Email</p>
                 <a
-                  href="mailto:aaiconferences@gmail.com"
+                  href={`mailto:${email}`}
                   className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
                 >
-                  aaiconferences@gmail.com
+                  {email}
                 </a>
+                {is2024 && contact2024.alternateEmail && (
+                  <>
+                    <br />
+                    <a
+                      href={`mailto:${contact2024.alternateEmail}`}
+                      className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline text-sm"
+                    >
+                      {contact2024.alternateEmail}
+                    </a>
+                  </>
+                )}
               </div>
             </div>
             
@@ -54,22 +79,47 @@ function Contact() {
               <MapPin size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-semibold text-zinc-950 dark:text-zinc-100">Location</p>
-                <p className="text-zinc-700 dark:text-zinc-400">Central University of Kashmir, India</p>
+                <p className="text-zinc-700 dark:text-zinc-400">{location}</p>
               </div>
             </div>
+
+            {is2024 && contact2024.contactPerson && (
+              <div className="flex items-start gap-3">
+                <User size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
+                <div>
+                  <p className="font-semibold text-zinc-950 dark:text-zinc-100">Contact Person</p>
+                  <p className="text-zinc-700 dark:text-zinc-400">{contact2024.contactPerson}</p>
+                </div>
+              </div>
+            )}
+
+            {is2024 && contact2024.phone && (
+              <div className="flex items-start gap-3">
+                <Phone size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
+                <div>
+                  <p className="font-semibold text-zinc-950 dark:text-zinc-100">Phone</p>
+                  <a
+                    href={`tel:${contact2024.phone}`}
+                    className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
+                  >
+                    {contact2024.phone}
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Map */}
           <div className="mt-6">
             <a
-              href="https://maps.app.goo.gl/36i9dDJWYn9n3nRS7"
+              href={mapLink}
               target="_blank"
               rel="noopener noreferrer"
               className="block"
             >
               <iframe
                 title="map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3298.680615552739!2d74.72459227572418!3d34.23117257309002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38e19d996de5015d%3A0x5cdc403498de0f0e!2sCentral%20University%20of%20Kashmir!5e0!3m2!1sen!2sin!4v1758301985418!5m2!1sen!2sin"
+                src={mapSrc}
                 width="100%"
                 height="300"
                 allowFullScreen=""
