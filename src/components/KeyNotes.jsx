@@ -48,13 +48,13 @@ function KeyNotes() {
     >
       {/* Keynote Speakers */}
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 border-l-4 border-blue-600 pl-4">
+        <h3 className="text-2xl font-bold text-zinc-900 dark:text-gray-100 mb-6 border-l-4 border-[#5E6AD2] dark:border-[#c9a86a] pl-4">
           Keynote Speakers
         </h3>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {keynoteSpeakers.map((speaker, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 rounded shadow-sm p-6 text-center hover:shadow-md transition">
-              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-blue-600 mb-4">
+            <div key={idx} className="speaker-card-light rounded shadow-sm p-6 text-center hover:shadow-md transition border border-black/[0.1] dark:border-white/10">
+              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-[#5E6AD2] dark:border-blue-600 mb-4">
                 <img 
                   src={speaker.image} 
                   alt={speaker.name}
@@ -62,11 +62,11 @@ function KeyNotes() {
                   onError={(e) => e.target.src = "https://via.placeholder.com/150?text=Speaker"}
                 />
               </div>
-              <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">{speaker.name}</h4>
-              <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">{speaker.role}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{speaker.org}</p>
+              <h4 className="text-lg font-bold text-zinc-900 dark:text-gray-100 mb-1">{speaker.name}</h4>
+              <p className="text-sm text-[#5E6AD2] dark:text-blue-400 font-medium mb-2">{speaker.role}</p>
+              <p className="text-xs text-zinc-700 dark:text-gray-400">{speaker.org}</p>
               {speaker.bio && (
-                <p className="mt-3 text-xs text-gray-700 dark:text-gray-300 leading-relaxed text-left">
+                <p className="mt-3 text-xs text-zinc-700 dark:text-gray-300 leading-relaxed text-left">
                   {speaker.bio}
                 </p>
               )}
@@ -77,13 +77,13 @@ function KeyNotes() {
 
       {/* Invited Speakers */}
       <div>
-        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 border-l-4 border-green-600 pl-4">
+        <h3 className="text-2xl font-bold text-zinc-900 dark:text-gray-100 mb-6 border-l-4 border-[#5E6AD2] dark:border-[#c9a86a] pl-4">
           Invited Speakers
         </h3>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {invitedSpeakers.map((speaker, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 rounded shadow-sm p-6 text-center hover:shadow-md transition">
-              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-green-600 mb-4">
+            <div key={idx} className="speaker-card-light rounded shadow-sm p-6 text-center hover:shadow-md transition border border-black/[0.1] dark:border-white/10">
+              <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-[#5E6AD2] dark:border-green-600 mb-4">
                 <img 
                   src={speaker.image} 
                   alt={speaker.name}
@@ -91,21 +91,21 @@ function KeyNotes() {
                   onError={(e) => e.target.src = "https://via.placeholder.com/150?text=Speaker"}
                 />
               </div>
-              <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">{speaker.name}</h4>
-              <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-2">{speaker.role}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{speaker.org}</p>
+              <h4 className="text-lg font-bold text-zinc-900 dark:text-gray-100 mb-1">{speaker.name}</h4>
+              <p className="text-sm text-[#5E6AD2] dark:text-green-400 font-medium mb-2">{speaker.role}</p>
+              <p className="text-xs text-zinc-700 dark:text-gray-400">{speaker.org}</p>
               {speaker.talkTitle && (
-                <div className="mt-3 text-left rounded-lg border border-emerald-200 bg-gradient-to-r from-emerald-50 via-green-50 to-lime-50 px-3 py-2 shadow-sm dark:border-emerald-700/30 dark:from-emerald-950/40 dark:via-green-950/40 dark:to-lime-950/40">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-700 dark:text-emerald-400">
+                <div className="mt-3 text-left rounded-lg border border-[#5E6AD2]/20 bg-[#5E6AD2]/5 px-3 py-2 shadow-sm dark:border-emerald-700/30 dark:from-emerald-950/40 dark:via-green-950/40 dark:to-lime-950/40">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5E6AD2] dark:text-emerald-400">
                     Talk Spotlight
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-gray-800 leading-relaxed dark:text-gray-200">
+                  <p className="mt-1 text-xs font-semibold text-zinc-900 leading-relaxed dark:text-gray-200">
                     {speaker.talkTitle}
                   </p>
                 </div>
               )}
               {speaker.bio && (
-                <p className="mt-3 text-xs text-gray-700 dark:text-gray-300 leading-relaxed text-left">
+                <p className="mt-3 text-xs text-zinc-700 dark:text-gray-300 leading-relaxed text-left">
                   {speaker.bio}
                 </p>
               )}
