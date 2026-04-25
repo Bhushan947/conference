@@ -128,7 +128,13 @@ function CallForPapers() {
         </div>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-black/[0.08] bg-white p-6 shadow-sm dark:border-white/10 dark:bg-black/20">
+      <div
+        className={`mb-6 rounded-2xl p-6 shadow-sm ${
+          isDark
+            ? "border border-white/15 bg-black"
+            : "border border-[#E8A020]/18 bg-[#FFFEF8]"
+        }`}
+      >
         <h3 className="text-lg font-bold text-zinc-950 dark:text-zinc-100 mb-2">Copyright Form</h3>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
           Download and review the copyright form. You can also view it directly below.
@@ -142,7 +148,7 @@ function CallForPapers() {
           Open Copyright PDF
           <ExternalLink size={14} />
         </a>
-        <div className="border border-black/[0.08] dark:border-white/10 rounded overflow-hidden">
+        <div className={`rounded overflow-hidden ${isDark ? "border border-white/15" : "border border-black/15"}`}>
           <object data={pdfUrl} type="application/pdf" className="w-full h-[700px]">
             <embed src={pdfUrl} type="application/pdf" className="w-full h-[700px]" />
             <div className="p-4 text-sm text-zinc-700 dark:text-zinc-300">
@@ -166,9 +172,13 @@ function CallForPapers() {
         {sections.map((sec) => (
           <div
             key={sec.id}
-            className="rounded-2xl border border-black/[0.08] bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-black/20"
+            className={`rounded-2xl p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+              isDark
+                ? "border border-white/15 bg-black"
+                : "border border-[#E8A020]/18 bg-[#FFFEF8]"
+            }`}
           >
-            <div className="mb-4 flex items-center gap-3 border-b border-black/[0.08] pb-3 dark:border-white/10">
+            <div className="mb-4 flex items-center gap-3 border-b border-black/15 pb-3 dark:border-white/15">
               {sec.icon}
               <h3 className="text-lg font-bold text-zinc-950 dark:text-zinc-100">
                 {sec.title}
