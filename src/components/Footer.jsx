@@ -3,12 +3,15 @@
 
 import { FaInstagram, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/themeContext";
 import { useYear } from "../context/yearContext";
 
 function Footer() {
   const { selectedYear } = useYear();
+  const { isDark } = useTheme();
+  const footerBgClass = isDark ? "bg-black" : "bg-white";
   return (
-    <footer className="mt-14 border-t border-black/[0.12] bg-white/90 dark:bg-zinc-950/90">
+    <footer className={`mt-14 border-t border-black/[0.12] ${footerBgClass}`}>
       {/* Main Footer Content */}
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Contact Us Section */}
@@ -81,7 +84,7 @@ function Footer() {
       </div>
 
       {/* Bottom Copyright Bar */}
-      <div className="border-t border-black/[0.08] bg-zinc-100/60 dark:bg-zinc-900/80">
+      <div className={`border-t border-black/[0.08] ${footerBgClass}`}>
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex flex-col items-center justify-between gap-2 text-xs text-zinc-600 md:flex-row">
             <p>
@@ -108,7 +111,7 @@ function Footer() {
       </div>
 
       {/* CVF Knowledge Link -> 2AI Knowledge */}
-      <div className="border-t border-black/[0.08] bg-zinc-50/70 dark:bg-zinc-900/70">
+      <div className={`border-t border-black/[0.08] ${footerBgClass}`}>
         <div className="mx-auto max-w-7xl px-6 py-3 text-center">
           <a 
             href="#" 

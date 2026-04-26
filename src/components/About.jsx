@@ -28,7 +28,7 @@ function About() {
       CUK offers a wide range of academic programs, including undergraduate, postgraduate, and doctoral degrees across various disciplines. These include arts, commerce, engineering,education, law, and science. The university is in the process of developing a full-fledged campus at Tulmulla, with over 500 acres of land acquired for this purpose. While construction is ongoing,the university currently operates from several temporary campuses in Ganderbal.
       
       The university places a strong emphasis on providing a conducive learning environment, with facilities like a library, hostels, and sports complexes. Admissions to most undergraduate and postgraduate programs are based on the Common University Entrance Test (CUET). The university attracts students from various states across India.`,
-      image: "/TULMUULAH CAMPUS.jpg",
+      image: "/TULMUULAH CAMPUS.png",
     },
     {
       title: "About USD AI Research",
