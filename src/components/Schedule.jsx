@@ -17,7 +17,7 @@ function Schedule() {
         title="Conference Schedule"
         subtitle="Detailed schedule for the 2024 International Conference on Applied AI"
       >
-        <div className="space-y-6">
+        <div className="space-y-8">
           {data.schedule.days.map((day, dIdx) => (
             <div key={dIdx} className="linear-card overflow-hidden">
               <div className="bg-[#5E6AD2] dark:bg-[#c9a86a] px-6 py-4">
@@ -47,13 +47,13 @@ function Schedule() {
       title="Conference Schedule"
       subtitle="Stay up to date with our sessions, workshops, and keynotes"
     >
-      <div className="bg-white rounded shadow-sm p-8">
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+      <div className="linear-card p-10 md:p-12">
+        <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
           <Calendar size={64} className="text-blue-600 mb-6" />
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-zinc-900 md:text-4xl">
             Schedule Coming Soon
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl">
+          <p className="max-w-2xl text-base leading-8 text-zinc-700 md:text-lg">
             The detailed conference schedule will be published soon. Please check back later for information about sessions, workshops, and keynote presentations.
           </p>
         </div>

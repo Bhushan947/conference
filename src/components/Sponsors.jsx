@@ -44,17 +44,17 @@ function Sponsors() {
       title="Sponsors"
       subtitle={`Sponsorship tiers and partnership benefits for the ${selectedYear} International Conference on Applied Artificial Intelligence`}
     >
-      <div className="space-y-12">
+      <div className="space-y-10">
         {/* Tier Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {sponsorsData.tiers.map((tier, idx) => (
-            <div key={idx} className="linear-card group overflow-hidden flex flex-col hover:border-[#c9a86a]/40 transition-all">
+            <div key={idx} className="linear-card group flex flex-col overflow-hidden transition-all hover:border-[#c9a86a]/40">
               <div className="p-6 text-center border-b border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]">
                 <div className="flex justify-center mb-4 transition-transform group-hover:scale-110">
                   {getTierIcon(tier.name)}
                 </div>
                 <h3 className="text-xl font-bold text-zinc-950 dark:text-zinc-100">{tier.name}</h3>
-                <p className="text-2xl font-black text-[#c9a86a] mt-2 tracking-tight">{tier.amount}</p>
+                <p className="mt-2 text-2xl font-black tracking-tight text-[#5E6AD2] dark:text-[#c9a86a]">{tier.amount}</p>
               </div>
               <div className="p-6 flex-1 flex flex-col justify-between">
                 <div className="space-y-3">
@@ -115,14 +115,14 @@ function Sponsors() {
           </div>
         </div>
 
-        <div className="bg-[#c9a86a]/10 border border-[#c9a86a]/20 p-8 text-center">
+        <div className="linear-card border border-[#c9a86a]/20 bg-[#c9a86a]/10 p-8 text-center">
           <h3 className="text-xl font-bold text-zinc-950 dark:text-zinc-100 mb-2 uppercase tracking-wide">Interested in Partnering?</h3>
           <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-6">
-            For more details on sponsorship opportunities, please contact the organizing committee at <span className="font-bold text-[#c9a86a]">appliedaiconf@gmail.com</span>
+            For more details on sponsorship opportunities, please contact the organizing committee at <span className="font-bold text-[#5E6AD2] dark:text-[#c9a86a]">appliedaiconf@gmail.com</span>
           </p>
           <a 
             href="mailto:appliedaiconf@gmail.com"
-            className="inline-flex items-center gap-2 bg-[#c9a86a] text-zinc-950 px-8 py-3 font-bold hover:bg-[#b8975a] transition-all shadow-xl shadow-[#c9a86a]/10 uppercase tracking-widest text-xs"
+            className="linear-primary ui-focus-ring inline-flex items-center gap-2 px-8 py-3 text-xs font-bold uppercase tracking-widest"
           >
             Contact for Sponsorship
           </a>

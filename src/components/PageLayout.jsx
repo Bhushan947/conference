@@ -12,13 +12,13 @@ function PageLayout({ children, title, subtitle, showHeader = true }) {
       
       {showHeader && (
         <div className="border-b border-black/[0.06] bg-white/45 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto px-6 py-10">
-            <p className="terminal-label mb-4">2AI-{selectedYear} · Conference Section</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-zinc-950 mb-2">
+          <div className="mx-auto max-w-7xl px-6 py-12 md:py-14">
+            <p className="terminal-label mb-4 text-zinc-600">2AI-{selectedYear} · Conference Section</p>
+            <h1 className="text-3xl font-bold text-zinc-950 md:text-5xl">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-lg text-zinc-500">
+              <p className="mt-3 max-w-3xl text-base leading-7 text-zinc-700 md:text-lg">
                 {subtitle}
               </p>
             )}
@@ -26,7 +26,7 @@ function PageLayout({ children, title, subtitle, showHeader = true }) {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+      <div className="mx-auto w-full max-w-7xl px-6 py-10 md:py-12">
         {children}
       </div>
     </div>

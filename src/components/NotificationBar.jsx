@@ -30,7 +30,7 @@ const NotificationBar = () => {
     <div className="relative overflow-hidden rounded-2xl border border-[#E8A020]/45 bg-gradient-to-r from-[#FFF9EB] via-[#F8F0DD] to-[#F3E7C8] shadow-[0_10px_28px_rgba(232,160,32,0.16)] dark:border-[#E8A020]/30 dark:bg-[#0A0F1E] dark:shadow-[0_0_28px_rgba(123,79,255,0.12)]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(232,160,32,0.16),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(123,79,255,0.14),transparent_35%)] dark:bg-[radial-gradient(circle_at_10%_20%,rgba(232,160,32,0.16),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(123,79,255,0.14),transparent_35%)]" />
 
-      <div className="relative animate-marquee flex w-max items-center whitespace-nowrap py-3 hover:[animation-play-state:paused]">
+      <div className="notification-marquee relative flex w-max items-center whitespace-nowrap py-3 hover:[animation-play-state:paused]">
         {doubled.map((item, idx) => {
           const Icon = item.icon;
           const baseItemClass =
@@ -54,15 +54,6 @@ const NotificationBar = () => {
         })}
       </div>
 
-      <style>{`
-        .animate-marquee {
-          animation: marquee 38s linear infinite;
-        }
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
     </div>
   );
 };

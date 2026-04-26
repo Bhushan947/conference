@@ -84,14 +84,14 @@ function About() {
     >
       <section className="linear-card overflow-hidden p-0">
         <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="p-6 md:p-8">
+          <div className="p-6 md:p-10">
             <p className="text-sm font-semibold uppercase text-[#5E6AD2] dark:text-[#c9a86a]">
               Conference Overview
             </p>
-            <h2 className="mt-3 max-w-3xl text-2xl font-bold leading-tight text-zinc-950 dark:text-zinc-100 md:text-4xl">
+            <h2 className="mt-3 max-w-3xl text-3xl font-bold leading-tight text-zinc-950 dark:text-zinc-100 md:text-5xl">
               {meta.title}
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-5 max-w-3xl text-base leading-8 text-zinc-700 dark:text-zinc-400">
               {is2024
                 ? data.about.overview
                 : "A three-day flagship academic event hosted by Central University of Kashmir in collaboration with USD AI Research, bringing together researchers, students, and industry professionals working across applied artificial intelligence."}
@@ -142,7 +142,7 @@ function About() {
         </div>
       </section>
 
-      <div className="mt-8 space-y-6">
+      <div className="mt-10 space-y-8">
         {sections.map((section, idx) => {
           const isEven = idx % 2 === 0;
           return (
@@ -160,14 +160,14 @@ function About() {
                   />
                 </div>
 
-                <div className="p-6 md:p-8">
+                <div className="p-6 md:p-10">
                   <p className="text-xs font-semibold uppercase text-zinc-400">
                     {String(idx + 1).padStart(2, "0")}
                   </p>
-                  <h3 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-zinc-100">
+                  <h3 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-zinc-100 md:text-3xl">
                     {section.title}
                   </h3>
-                  <div className="mt-4 text-base leading-8 text-zinc-600 dark:text-zinc-400 whitespace-pre-line">
+                  <div className="mt-4 text-base leading-8 text-zinc-700 dark:text-zinc-400 whitespace-pre-line">
                     {section.text}
                   </div>
                 </div>
@@ -177,8 +177,8 @@ function About() {
         })}
       </div>
 
-      <section className="linear-card mt-8 border-l-4 border-[#5E6AD2] dark:border-[#c9a86a] p-6">
-        <p className="text-base leading-7 text-zinc-700 dark:text-zinc-300">
+      <section className="linear-card mt-10 border-l-4 border-[#5E6AD2] dark:border-[#c9a86a] p-6 md:p-8">
+        <p className="text-base leading-8 text-zinc-700 dark:text-zinc-300">
           The Microsoft CMT service was used for managing the peer-reviewing
           process for this conference. This service was provided for free by
           Microsoft and they bore all expenses, including costs for Azure

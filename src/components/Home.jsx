@@ -106,7 +106,7 @@ function Home() {
     <div className="app-shell flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="mx-auto w-full max-w-7xl px-6 py-10">
+      <main className="mx-auto w-full max-w-7xl px-6 py-12">
         <section className="linear-card event-hero overflow-hidden p-0">
           <div className="grid gap-8 p-6 md:grid-cols-[1.08fr_0.92fr] md:p-8 lg:p-10">
             <div className="flex flex-col justify-center">
@@ -117,7 +117,7 @@ function Home() {
               <h1 className="max-w-4xl text-3xl font-bold leading-[1.08] text-zinc-950 dark:text-zinc-100 md:text-5xl">
                 {meta.title}
               </h1>
-              <p className="mt-5 max-w-3xl text-base leading-7 text-zinc-800 dark:text-zinc-400">
+              <p className="mt-5 max-w-3xl text-base leading-8 text-zinc-800 dark:text-zinc-400">
                 {is2024
                   ? data.hero.description
                   : "A major academic forum for applied AI research, technical exchange, and cross-sector collaboration in education, healthcare, agriculture, finance, energy, and security."}
@@ -178,7 +178,7 @@ function Home() {
           </section>
         )}
 
-        <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <section className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
           <div className="lg:col-span-1 flex flex-col gap-6">
             <div className="linear-card p-6 flex-1 flex flex-col">
               <h3 className="text-lg font-semibold text-zinc-950 dark:text-zinc-100">Paper Submission</h3>
@@ -302,11 +302,11 @@ function Home() {
           </div>
         </section>
 
-        <section className="linear-card mt-6 p-6">
+        <section className="linear-card mt-8 p-6 md:p-8">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-xl font-bold text-zinc-950">Conference Themes</h2>
-              <p className="mt-1 text-sm text-zinc-500">Applied AI tracks designed for academic and industry participation.</p>
+              <h2 className="text-2xl font-bold text-zinc-950">Conference Themes</h2>
+              <p className="mt-2 text-base text-zinc-600">Applied AI tracks designed for academic and industry participation.</p>
             </div>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -324,9 +324,9 @@ function Home() {
 
         <section
           ref={speakersRef}
-          className={`linear-card mt-6 p-6 transition-all duration-700 ${speakersInView ? "opacity-100" : "opacity-0"}`}
+          className={`linear-card mt-8 p-6 md:p-8 transition-all duration-700 ${speakersInView ? "opacity-100" : "opacity-0"}`}
         >
-          <h2 className="text-xl font-bold text-zinc-950">Distinguished Speakers</h2>
+          <h2 className="text-2xl font-bold text-zinc-950">Distinguished Speakers</h2>
 
           <div className={`mt-4 grid gap-4 md:grid-cols-2 ${displaySpeakers.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
             {displaySpeakers.map((speaker, idx) => (
@@ -355,9 +355,9 @@ function Home() {
 
         <section
           ref={sponsorsRef}
-          className={`linear-card mt-6 p-6 transition-all duration-700 ${sponsorsInView ? "opacity-100" : "opacity-0"}`}
+          className={`linear-card mt-8 p-6 md:p-8 transition-all duration-700 ${sponsorsInView ? "opacity-100" : "opacity-0"}`}
         >
-          <h2 className="text-xl font-bold text-zinc-950">Sponsors & Partners</h2>
+          <h2 className="text-2xl font-bold text-zinc-950">Sponsors & Partners</h2>
           
           {is2024 && data.sponsorship ? (
             <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">

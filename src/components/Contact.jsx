@@ -42,11 +42,11 @@ function Contact() {
       title="Contact Us"
       subtitle="Get in touch with the conference organizers"
     >
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         
         {/* Contact Information */}
-        <div className="linear-card p-6">
-          <h3 className="text-2xl font-bold text-zinc-950 dark:text-zinc-100 mb-6">
+        <div className="linear-card p-6 md:p-8">
+          <h3 className="mb-6 text-2xl font-bold text-zinc-950 dark:text-zinc-100 md:text-3xl">
             Contact Information
           </h3>
           
@@ -57,7 +57,7 @@ function Contact() {
                 <p className="font-semibold text-zinc-950 dark:text-zinc-100">Email</p>
                 <a
                   href={`mailto:${email}`}
-                  className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
+                  className="ui-link"
                 >
                   {email}
                 </a>
@@ -66,7 +66,7 @@ function Contact() {
                     <br />
                     <a
                       href={`mailto:${contact2024.alternateEmail}`}
-                      className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline text-sm"
+                      className="ui-link text-sm"
                     >
                       {contact2024.alternateEmail}
                     </a>
@@ -79,7 +79,7 @@ function Contact() {
               <MapPin size={20} className="text-[#5E6AD2] dark:text-[#c9a86a] flex-shrink-0 mt-1" />
               <div>
                 <p className="font-semibold text-zinc-950 dark:text-zinc-100">Location</p>
-                <p className="text-zinc-700 dark:text-zinc-400">{location}</p>
+                <p className="text-zinc-700 dark:text-zinc-400 leading-7">{location}</p>
               </div>
             </div>
 
@@ -100,7 +100,7 @@ function Contact() {
                   <p className="font-semibold text-zinc-950 dark:text-zinc-100">Phone</p>
                   <a
                     href={`tel:${contact2024.phone}`}
-                    className="text-[#5E6AD2] dark:text-[#c9a86a] hover:underline"
+                    className="ui-link"
                   >
                     {contact2024.phone}
                   </a>
@@ -131,8 +131,8 @@ function Contact() {
         </div>
 
         {/* Feedback Form */}
-        <div className="linear-card p-6">
-          <h3 className="text-2xl font-bold text-zinc-950 dark:text-zinc-100 mb-6">
+        <div className="linear-card p-6 md:p-8">
+          <h3 className="mb-6 text-2xl font-bold text-zinc-950 dark:text-zinc-100 md:text-3xl">
             Send Us Your Feedback
           </h3>
           
@@ -149,7 +149,7 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="Your Name"
-                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
+                className="linear-input w-full"
               />
             </div>
             
@@ -165,7 +165,7 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="your.email@example.com"
-                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
+                className="linear-input w-full"
               />
             </div>
             
@@ -181,13 +181,13 @@ function Contact() {
                 onChange={handleChange}
                 required
                 placeholder="Share your thoughts, suggestions, or questions..."
-                className="w-full border border-gray-300 dark:border-zinc-700 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-[#5E6AD2] dark:focus:ring-[#c9a86a] focus:border-[#5E6AD2] dark:focus:border-[#c9a86a] outline-none   placeholder:text-gray-400 dark:placeholder:text-zinc-500"
+                className="linear-input w-full"
               ></textarea>
             </div>
             
             <button
               type="submit"
-              className="w-full bg-[#5E6AD2] dark:bg-[#c9a86a] hover:bg-[#4a52b5] dark:hover:bg-[#b8935a] text-white dark:text-zinc-950 font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
+              className="linear-primary ui-focus-ring flex w-full items-center justify-center gap-2 py-3"
             >
               <Send size={18} />
               Send Feedback

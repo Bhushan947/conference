@@ -134,6 +134,8 @@ body {
   --card-bg: rgb(255 255 255 / 0.72);
   --card-border: rgb(20 20 20 / 0.14);
   --nav-bg: rgb(244 244 241 / 0.9);
+  --focus-ring: rgb(201 168 106 / 0.35);
+  --focus-ring-strong: rgb(201 168 106 / 0.55);
 }
 
 :root[data-theme="dark"] {
@@ -165,6 +167,20 @@ body {
   transition: background-color 180ms ease, color 180ms ease;
 }
 
+a,
+button {
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus-ring-strong);
+  outline-offset: 2px;
+}
+
 ::selection {
   background: rgb(94 106 210 / 0.28);
 }
@@ -187,6 +203,20 @@ body {
 .terminal-nav-item {
   border-radius: 0;
   letter-spacing: 0.05em;
+}
+
+.ui-link {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.ui-link:hover {
+  color: var(--brand-hover);
+  text-decoration: underline;
+}
+
+.ui-focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 [class~="text-[#5E6AD2]"] {
@@ -274,6 +304,11 @@ body {
   transform: none;
 }
 
+.linear-primary:focus-visible,
+.linear-secondary:focus-visible {
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
 .linear-secondary {
   background: transparent;
   border: 1px solid var(--card-border);
@@ -283,6 +318,55 @@ body {
 .linear-secondary:hover {
   background: rgb(0 0 0 / 0.04);
   transform: none;
+}
+
+.linear-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.linear-table thead tr {
+  background: var(--brand);
+}
+
+.linear-table th {
+  padding: 1rem;
+  color: #fff;
+  font-weight: 700;
+}
+
+.linear-table td {
+  padding: 1rem;
+  color: var(--text-main);
+}
+
+.linear-table tbody tr {
+  border-top: 1px solid var(--border-soft);
+}
+
+.linear-table tbody tr:hover {
+  background: rgb(0 0 0 / 0.03);
+}
+
+.notification-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .notification-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 :root[data-theme="dark"] body {
@@ -399,7 +483,7 @@ body {
 :root[data-theme="dark"] .text-zinc-600,
 :root[data-theme="dark"] .text-zinc-700,
 :root[data-theme="dark"] .text-zinc-800 {
-  color: var(--text-soft) !important;
+  color: #b0b4b7 !important;
 }
 
 /* Light mode text color enforcement */

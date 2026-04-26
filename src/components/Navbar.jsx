@@ -157,9 +157,9 @@ function Navbar() {
   ];
 
   const navLinkClass =
-    "terminal-nav-item px-2 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950 whitespace-nowrap";
+    "terminal-nav-item ui-focus-ring px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-black/[0.04] hover:text-zinc-950 whitespace-nowrap";
   const mobileLinkClass =
-    "terminal-nav-item block px-3 py-2 text-sm font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950";
+    "terminal-nav-item ui-focus-ring block px-3 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-black/[0.04] hover:text-zinc-950";
 
   const handleMenuToggle = () => {
     if (isOpen) {
@@ -188,15 +188,17 @@ function Navbar() {
 
   return (
     <header className="linear-nav sticky top-0 z-50 border-b border-black/[0.06] bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
         <div className="flex min-w-0 items-center gap-3">
-          <img src="/CUKLogo.png" alt="CUK Logo" className="h-11 w-auto shrink-0 object-contain" />
-          <img src="/logo.png" alt="Conference Logo" className="h-11 w-auto shrink-0 object-contain" />
+          <Link to="/" aria-label="Go to homepage" className="ui-focus-ring inline-flex">
+            <img src="/CUKLogo.png" alt="CUK Logo" className="h-10 w-auto shrink-0 object-contain sm:h-11" />
+          </Link>
+          <img src="/logo.png" alt="Conference Logo" className="h-10 w-auto shrink-0 object-contain sm:h-11" />
           <a
             href="https://www.springer.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden items-center sm:flex"
+            className="hidden items-center md:flex"
           >
             <img src="/springer.png" alt="Springer Logo" className="h-7 w-auto object-contain" />
           </a>
@@ -210,7 +212,7 @@ function Navbar() {
           <div className="relative hidden md:block">
             <form onSubmit={handleSearchSubmit}>
               <label className={`linear-search flex h-8 items-center gap-2 border bg-white px-2.5 text-zinc-500 transition-all ${
-                isSearchFocused ? "border-[#5E6AD2] ring-2 ring-[#5E6AD2]/10 w-64" : "border-black/10 w-44 lg:w-52"
+                isSearchFocused ? "border-[#5E6AD2] ring-2 ring-[#5E6AD2]/10 w-60 lg:w-64" : "border-black/10 w-40 lg:w-52"
               }`}>
                 <Search size={14} aria-hidden />
                 <input
@@ -258,7 +260,7 @@ function Navbar() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="theme-toggle inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 shadow-sm transition hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-[#5E6AD2]/40"
+            className="theme-toggle ui-focus-ring inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 shadow-sm transition hover:bg-zinc-50"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             title={isDark ? "Switch to light mode" : "Switch to dark mode"}
           >
@@ -266,13 +268,13 @@ function Navbar() {
           </button>
           <Link
             to="/admin/login"
-            className="terminal-nav-item hidden items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:bg-black/[0.04] hover:text-zinc-950 sm:flex"
+            className="terminal-nav-item ui-focus-ring hidden items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:bg-black/[0.04] hover:text-zinc-950 sm:flex"
           >
             <User size={16} aria-hidden />
             <span>Admin</span>
           </Link>
           <button
-            className="inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 transition hover:bg-zinc-50 lg:hidden"
+            className="ui-focus-ring inline-flex h-8 w-8 items-center justify-center border border-black/10 bg-white text-zinc-700 transition hover:bg-zinc-50 lg:hidden"
             onClick={handleMenuToggle}
             aria-label={isOpen ? "Close menu" : "Toggle menu"}
           >
@@ -290,7 +292,7 @@ function Navbar() {
                 setCommitteeOpen(false);
                 setSessionsOpen(false);
               }}
-              className="terminal-nav-item flex items-center gap-0.5 border border-black/[0.06] bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-950 whitespace-nowrap"
+              className="terminal-nav-item ui-focus-ring flex items-center gap-0.5 border border-black/[0.06] bg-white px-2.5 py-1 text-xs font-semibold text-zinc-700 shadow-sm transition hover:bg-zinc-50 hover:text-zinc-950 whitespace-nowrap"
             >
               Select Year ({selectedYear})
               <ChevronDown size={12} className={`transition-transform ${yearOpen ? "rotate-180" : ""}`} />
@@ -308,6 +310,7 @@ function Navbar() {
                   >
                     2026 {selectedYear === 2026 && "✓"}
                   </li>
+                  <li className="px-3 py-1.5 text-xs text-zinc-400 cursor-not-allowed">2025</li>
                   <li
                     onClick={() => { setSelectedYear(2024); setYearOpen(false); }}
                     className={`px-3 py-1.5 text-xs cursor-pointer transition ${
@@ -318,7 +321,6 @@ function Navbar() {
                   >
                     2024 {selectedYear === 2024 && "✓"}
                   </li>
-                  <li className="px-3 py-1.5 text-xs text-zinc-400 cursor-not-allowed">2025</li>
                 </ul>
               </div>
             )}
@@ -393,7 +395,7 @@ function Navbar() {
 
             <Link to="/KeyNotes" className={navLinkClass}>Speakers</Link>
             <Link to="/sponsors" className={navLinkClass}>Sponsors</Link>
-            <Link to="/registration" className="terminal-nav-item bg-[#5E6AD2] px-2 py-1.5 text-xs font-semibold text-white shadow-[0_12px_26px_rgba(94,106,210,0.22)] transition hover:bg-[#6f7af0] whitespace-nowrap">
+            <Link to="/registration" className="terminal-nav-item ui-focus-ring bg-[#5E6AD2] px-2.5 py-1.5 text-xs font-semibold text-white shadow-[0_12px_26px_rgba(94,106,210,0.22)] transition hover:bg-[#6f7af0] whitespace-nowrap">
               Registration
             </Link>
             <Link to="/contact" className={navLinkClass}>Contact</Link>
@@ -487,7 +489,7 @@ function Navbar() {
 
               <Link to="/KeyNotes" onClick={handleMenuToggle} className={mobileLinkClass}>Speakers</Link>
               <Link to="/sponsors" onClick={handleMenuToggle} className={mobileLinkClass}>Sponsors</Link>
-              <Link to="/registration" onClick={handleMenuToggle} className="block bg-[#5E6AD2] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#6f7af0]">
+              <Link to="/registration" onClick={handleMenuToggle} className="ui-focus-ring block bg-[#5E6AD2] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#6f7af0]">
                 Registration
               </Link>
               <Link to="/contact" onClick={handleMenuToggle} className={mobileLinkClass}>Contact</Link>
@@ -497,7 +499,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={toggleTheme}
-                className="theme-toggle mt-2 flex w-full items-center justify-between border border-black/10 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                className="theme-toggle ui-focus-ring mt-2 flex w-full items-center justify-between border border-black/10 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
                 aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
               >
                 <span>{isDark ? "Light mode" : "Dark mode"}</span>

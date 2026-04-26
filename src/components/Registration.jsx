@@ -4,7 +4,6 @@
 import { useEffect, useState } from "react";
 import PageLayout from "./PageLayout";
 import RegistrationForm from "./RegistrationForm";
-import { useTheme } from "../context/themeContext";
 import { useYear } from "../context/yearContext";
 import conferenceData from "../content/conferenceData";
 import { Calendar, Users, DollarSign, Clock, CheckCircle, AlertCircle, Info } from "lucide-react";
@@ -20,7 +19,6 @@ function isLateFeeActive(now = new Date()) {
 
 function Registration() {
   const [usdToInrRate, setUsdToInrRate] = useState(DEFAULT_USD_TO_INR);
-  const { isDark } = useTheme();
   const { selectedYear } = useYear();
   const is2024 = selectedYear === 2024;
   const data = conferenceData[selectedYear];
@@ -48,10 +46,6 @@ function Registration() {
   }, []);
 
   const formatFee = (usd) => `$ ${usd} (Rs. ${Math.round(usd * usdToInrRate)})`;
-
-  const tableBg = isDark ? '#18181b' : '#ffffff';
-  const cellBg = isDark ? '#18181b' : '#ffffff';
-  const categoryBg = isDark ? '#27272a' : '#f4f4f5';
 
   // 2026 fee data (default)
   const registrationData2026 = [
@@ -162,10 +156,10 @@ function Registration() {
         
         {is2024 ? (
           /* 2024 Registration Fees */
-          <div className="overflow-x-auto rounded-xl border border-black/[0.06] dark:border-white/10 shadow-sm">
-            <table className="w-full text-left border-collapse text-sm" style={{ backgroundColor: tableBg }}>
+          <div className="overflow-x-auto border border-black/[0.06] dark:border-white/10 shadow-sm">
+            <table className="linear-table text-left">
               <thead>
-                <tr className="bg-[#5E6AD2] dark:bg-[#c9a86a]">
+                <tr>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">Category</th>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">Sub-category</th>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">Indian (INR)</th>
@@ -175,17 +169,17 @@ function Registration() {
               <tbody className="text-zinc-800 dark:text-zinc-300">
                 {data.registration.fees.map((section, sIdx) =>
                   section.rows.map((row, rIdx) => (
-                    <tr key={`${sIdx}-${rIdx}`} className="border-t border-black/[0.06] dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" style={{ backgroundColor: cellBg }}>
+                    <tr key={`${sIdx}-${rIdx}`} className="border-t border-black/[0.06] dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                       {rIdx === 0 && (
-                        <td rowSpan={section.rows.length} className="p-4 font-bold border-r border-black/[0.06] dark:border-white/10 align-middle" style={{ backgroundColor: categoryBg }}>
+                        <td rowSpan={section.rows.length} className="bg-zinc-100 p-4 align-middle font-bold dark:bg-zinc-800 border-r border-black/[0.06] dark:border-white/10">
                           {section.category}
                         </td>
                       )}
-                      <td className="p-4 border-r border-black/[0.06] dark:border-white/10" style={{ backgroundColor: cellBg }}>{row.subCategory}</td>
-                      <td className="p-4 font-semibold border-r border-black/[0.06] dark:border-white/10 text-[#5E6AD2] dark:text-[#c9a86a]" style={{ backgroundColor: cellBg }}>
+                      <td className="p-4 border-r border-black/[0.06] dark:border-white/10">{row.subCategory}</td>
+                      <td className="p-4 font-semibold border-r border-black/[0.06] dark:border-white/10 text-[#5E6AD2] dark:text-[#c9a86a]">
                         {row.inr ? `₹ ${row.inr.toLocaleString()}` : "—"}
                       </td>
-                      <td className="p-4 font-semibold text-[#5E6AD2] dark:text-[#c9a86a]" style={{ backgroundColor: cellBg }}>
+                      <td className="p-4 font-semibold text-[#5E6AD2] dark:text-[#c9a86a]">
                         {row.usd ? `$ ${row.usd}` : "—"}
                       </td>
                     </tr>
@@ -196,10 +190,10 @@ function Registration() {
           </div>
         ) : (
           /* 2026 Registration Fees */
-          <div className="overflow-x-auto rounded-xl border border-black/[0.06] dark:border-white/10 shadow-sm">
-            <table className="w-full text-left border-collapse text-sm" style={{ backgroundColor: tableBg }}>
+          <div className="overflow-x-auto border border-black/[0.06] dark:border-white/10 shadow-sm">
+            <table className="linear-table text-left">
               <thead>
-                <tr className="bg-[#5E6AD2] dark:bg-[#c9a86a]">
+                <tr>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">Category</th>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">Sub-category</th>
                   <th className="p-4 font-semibold text-white dark:text-zinc-950 border-r border-white/20 dark:border-zinc-950/20">South Asian</th>
@@ -209,17 +203,17 @@ function Registration() {
               <tbody className="text-zinc-800 dark:text-zinc-300">
                 {registrationData2026.map((section, sectionIdx) => (
                   section.rows.map((row, rowIdx) => (
-                    <tr key={`${sectionIdx}-${rowIdx}`} className="border-t border-black/[0.06] dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors" style={{ backgroundColor: cellBg }}>
+                    <tr key={`${sectionIdx}-${rowIdx}`} className="border-t border-black/[0.06] dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                       {rowIdx === 0 && (
-                        <td rowSpan={section.rows.length} className="p-4 font-bold border-r border-black/[0.06] dark:border-white/10 align-middle" style={{ backgroundColor: categoryBg }}>
+                        <td rowSpan={section.rows.length} className="bg-zinc-100 p-4 align-middle font-bold dark:bg-zinc-800 border-r border-black/[0.06] dark:border-white/10">
                           {section.category}
                         </td>
                       )}
-                      <td className="p-4 border-r border-black/[0.06] dark:border-white/10" style={{ backgroundColor: cellBg }}>{row.subCategory}</td>
-                      <td className="p-4 font-semibold border-r border-black/[0.06] dark:border-white/10 text-[#5E6AD2] dark:text-[#c9a86a]" style={{ backgroundColor: cellBg }}>
+                      <td className="p-4 border-r border-black/[0.06] dark:border-white/10">{row.subCategory}</td>
+                      <td className="p-4 font-semibold border-r border-black/[0.06] dark:border-white/10 text-[#5E6AD2] dark:text-[#c9a86a]">
                         {formatFee(row.southAsian)}
                       </td>
-                      <td className="p-4 font-semibold text-[#5E6AD2] dark:text-[#c9a86a]" style={{ backgroundColor: cellBg }}>
+                      <td className="p-4 font-semibold text-[#5E6AD2] dark:text-[#c9a86a]">
                         {formatFee(row.others)}
                       </td>
                     </tr>
@@ -275,25 +269,18 @@ function Registration() {
         )}
 
         {!is2024 && (
-          <div 
-            style={{ 
-              backgroundColor: isDark ? 'rgba(69, 10, 10, 0.4)' : '#fff1f1',
-              borderLeft: '4px solid #dc2626',
-              padding: '1.25rem',
-              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-            }}
-          >
+          <div className="linear-card border-l-4 border-red-600 bg-red-50/70 p-5 dark:bg-red-950/25">
             <div className="flex items-start gap-3">
-              <AlertCircle size={20} style={{ color: '#dc2626', flexShrink: 0, marginTop: '0.125rem' }} />
+              <AlertCircle size={20} className="mt-0.5 shrink-0 text-red-600 dark:text-red-400" />
               <div>
-                <p style={{ fontWeight: 'bold', color: isDark ? '#fee2e2' : '#000', marginBottom: '0.375rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <p className="mb-1.5 text-sm font-bold uppercase tracking-wide text-zinc-900 dark:text-red-100">
                   Late Fee Policy
                 </p>
-                <p style={{ fontSize: '0.875rem', color: isDark ? '#f4f4f5' : '#18181b', lineHeight: '1.625' }}>
-                  A <span style={{ fontWeight: '900', color: '#dc2626', textDecoration: 'underline', textDecorationColor: '#fecaca', textUnderlineOffset: '4px' }}>20% late fee</span> applies after May 5, 2026. 
+                <p className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                  A <span className="font-black text-red-700 underline decoration-red-200 underline-offset-4 dark:text-red-400">20% late fee</span> applies after May 5, 2026.
                   Please complete your registration early to avoid additional charges.
                   {isLateFeeActive() && (
-                    <span style={{ display: 'inline-block', marginTop: '0.5rem', fontWeight: 'bold', color: '#b91c1c', backgroundColor: '#fee2e2', padding: '0.25rem 0.5rem', borderRadius: '0.125rem' }}>
+                    <span className="mt-2 inline-block bg-red-100 px-2 py-1 font-bold text-red-700 dark:bg-red-900/40 dark:text-red-300">
                       ⚠ Currently active!
                     </span>
                   )}

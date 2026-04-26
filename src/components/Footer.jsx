@@ -8,29 +8,29 @@ import { useYear } from "../context/yearContext";
 function Footer() {
   const { selectedYear } = useYear();
   return (
-    <footer className="bg-white border-t border-gray-300 mt-12">
+    <footer className="mt-14 border-t border-black/[0.12] bg-white/90">
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Contact Us Section */}
-        <div className="max-w-3xl">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Contact Us</h3>
-          <div className="space-y-3 text-sm text-gray-700">
+        <div className="max-w-4xl">
+          <h3 className="mb-4 text-2xl font-bold text-zinc-900">Contact Us</h3>
+          <div className="space-y-3 text-sm text-zinc-700 md:text-base">
             <p>
-              <Link to="/contact" className="text-blue-600 hover:underline">
+              <Link to="/contact" className="text-[#5E6AD2] hover:underline">
                 2AI Help Desk
               </Link>
             </p>
             <p className="leading-relaxed">
               Please contact us with questions about the following topics:
             </p>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <p className="text-sm leading-relaxed text-zinc-600">
               Author - Paper Submission - Technical Issues, Author - Camera-Ready Paper, Registration -
               General, Registration - Cancellation, Childcare/Guests, Expo/Guests, Lodging, Visa Letter,
               Reviewer - Open Review Issues, Reviewer - General Issues, Reviewer - Conflict of Interest
             </p>
             <div className="pt-3">
-              <p className="font-semibold text-gray-800 mb-2">Website and Invitation Letter Help</p>
-              <p className="text-xs text-gray-600">
+              <p className="mb-2 font-semibold text-zinc-900">Website and Invitation Letter Help</p>
+              <p className="text-sm text-zinc-600">
                 Use the website help link for issues including login, inactive accounts, invitation letters,
                 papers not associated with a registration.
               </p>
@@ -39,30 +39,30 @@ function Footer() {
         </div>
 
         {/* Social Media & Webmaster */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-10 border-t border-black/[0.08] pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
             {/* Social Media */}
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-700 font-medium">Follow Us:</span>
+              <span className="text-sm font-medium text-zinc-700">Follow Us:</span>
               <div className="flex gap-4 text-xl">
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-pink-600 transition"
+                  className="text-zinc-600 transition hover:text-pink-600"
                   aria-label="Instagram"
                 >
                   <FaInstagram />
                 </a>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-blue-600 transition"
+                  className="text-zinc-600 transition hover:text-blue-600"
                   aria-label="LinkedIn"
                 >
                   <FaLinkedin />
                 </a>
                 <a
                   href="#"
-                  className="text-gray-600 hover:text-blue-700 transition"
+                  className="text-zinc-600 transition hover:text-blue-700"
                   aria-label="Facebook"
                 >
                   <FaFacebook />
@@ -72,7 +72,7 @@ function Footer() {
 
             {/* Webmaster */}
             <div className="text-center md:text-right">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-zinc-700">
                 <span className="font-medium">Webmaster:</span> Swathi and Central University of Kashmir Team
               </p>
             </div>
@@ -81,9 +81,9 @@ function Footer() {
       </div>
 
       {/* Bottom Copyright Bar */}
-      <div className="bg-gray-100 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-gray-600">
+      <div className="border-t border-black/[0.08] bg-zinc-100/60">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <div className="flex flex-col items-center justify-between gap-2 text-xs text-zinc-600 md:flex-row">
             <p>
               © {new Date().getFullYear()} {selectedYear} International Conference on Applied Artificial Intelligence (2AI). All Rights Reserved.
             </p>
@@ -107,11 +107,11 @@ function Footer() {
       </div>
 
       {/* CVF Knowledge Link -> 2AI Knowledge */}
-      <div className="bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-3 text-center">
+      <div className="border-t border-black/[0.08] bg-zinc-50/70">
+        <div className="mx-auto max-w-7xl px-6 py-3 text-center">
           <a 
             href="#" 
-            className="text-blue-600 hover:underline text-sm"
+            className="text-sm text-[#5E6AD2] hover:underline"
           >
             2AI Knowledge base
           </a>
