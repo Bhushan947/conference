@@ -112,7 +112,7 @@ function Home() {
             <div className="flex flex-col justify-center">
               <div className="terminal-label mb-5 inline-flex w-fit items-center gap-2 border border-black/[0.2] dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1.5 text-zinc-900 dark:text-zinc-300 shadow-sm">
                 <Sparkles size={14} className="text-[#5E6AD2] dark:text-[#c9a86a]" aria-hidden />
-                {is2024 ? data.hero.badge : "CUK & USD AI Research | Flagship Hybrid Conference"}
+                {is2024 ? data.hero.badge : "CUK AI Research | Flagship Hybrid Conference"}
               </div>
               <h1 className="max-w-4xl text-3xl font-bold leading-[1.08] text-zinc-950 dark:text-zinc-100 md:text-5xl">
                 {meta.title}

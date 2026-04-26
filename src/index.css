@@ -109,7 +109,7 @@
 
 /* Default for whole site */
 body {
-  font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Roboto Mono", "Courier New", Ubuntu, monospace;
+  font-family: Ubuntu, "Segoe UI", Roboto, Arial, sans-serif;
   background-color: #fafafa;
   color: #18181b;
   margin: 0;

@@ -13,7 +13,7 @@ const getInitialTheme = () => {
     return storedTheme;
   }
 
-  return "dark";
+  return "light";
 };
 
 export function ThemeProvider({ children }) {
