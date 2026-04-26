@@ -568,7 +568,7 @@ function RegistrationForm() {
               </p>
             </div>
 
-            <section className="mb-8 bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-lg border border-gray-200 dark:border-zinc-700">
+            <section className="linear-card mb-8 bg-white dark:bg-zinc-900/50 p-6 border border-black/[0.08] dark:border-zinc-700">
               <p className="text-sm font-semibold text-zinc-950 dark:text-zinc-100 mb-2">Secure online payment</p>
               <p className="text-sm text-zinc-700 dark:text-zinc-400 leading-relaxed mb-4">
                 Use the button below to open the payment portal, complete your transaction, and return here to finish
