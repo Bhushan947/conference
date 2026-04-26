@@ -39,6 +39,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,ttf,woff}"],
+        globIgnores: ["**/TULMUULAH CAMPUS.png"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/api\//],
       },
