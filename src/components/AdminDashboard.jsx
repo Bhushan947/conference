@@ -44,6 +44,11 @@ function formatFee(usd, inr) {
   return parts.length ? parts.join(" / ") : "—";
 }
 
+function displayAttendanceMode(row) {
+  const mode = row?.attendance_mode ?? row?.attendanceMode ?? "";
+  return String(mode).trim() || "Offline";
+}
+
 /** Map DB row from admin-registrations to RegistrationTicket props */
 function rowToTicketData(r) {
   const usd = Number(r.total_fee_usd);
@@ -60,7 +65,7 @@ function rowToTicketData(r) {
     paperTitle: r.paper_title || "",
     numAuthors: r.num_authors != null && r.num_authors !== "" ? String(r.num_authors) : "",
     attendWorkshop: r.attend_workshop || "",
-    attendanceMode: r.attendance_mode || "",
+    attendanceMode: displayAttendanceMode(r),
     modeOfPayment: r.mode_of_payment || "",
     transactionId: r.transaction_id || "",
     totalFeeUSD: Number.isFinite(usd) ? usd : 0,
@@ -191,7 +196,7 @@ export default function AdminDashboard() {
         r.num_authors != null && r.num_authors !== "" ? String(r.num_authors) : "",
       sub_category: r.sub_category ?? "",
       region: r.region ?? "",
-      attendance_mode: r.attendance_mode ?? "",
+      attendance_mode: String(r.attendance_mode ?? "").trim() || "Offline",
       attend_workshop: r.attend_workshop ?? "",
       total_fee_usd:
         r.total_fee_usd != null && r.total_fee_usd !== "" ? String(r.total_fee_usd) : "",
@@ -662,7 +667,7 @@ export default function AdminDashboard() {
                               {r.participant_type || "Participant"}
                             </span>
                             <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-[10px] font-bold text-blue-600">
-                              {r.attendance_mode || "Mode N/A"}
+                              {displayAttendanceMode(r)}
                             </span>
                           </div>
                           {r.paper_id && (
