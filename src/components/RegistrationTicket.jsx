@@ -124,7 +124,7 @@ const fontImport = `
   }
 `;
 
-export default function RegistrationTicket({ registrationData, onClose }) {
+export default function RegistrationTicket({ registrationData, onClose, onTicketReady }) {
   const ticketRef = useRef(null);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
 
@@ -151,6 +151,11 @@ export default function RegistrationTicket({ registrationData, onClose }) {
       color: { dark: "#111111", light: "#f4efe4" },
     }).then(setQrCodeUrl).catch(console.error);
   }, [regId, registrationData]);
+
+  useEffect(() => {
+    if (!qrCodeUrl || !ticketRef.current || typeof onTicketReady !== "function") return;
+    onTicketReady(ticketRef.current);
+  }, [qrCodeUrl, onTicketReady]);
 
   const fee = `$${registrationData.totalFeeUSD}${registrationData.totalFeeINR > 0 ? ` / ₹${registrationData.totalFeeINR}` : ""
     }`;

@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import PageLayout from "./PageLayout";
 import RegistrationTicket from "./RegistrationTicket";
 import { invokeEdge } from "../lib/supabaseFunctions";
+import { generateTicketPdfBase64 } from "../lib/ticketPdfGenerator";
+import { mapAdminRowToTicketData } from "../lib/ticketData";
 import { clearAdminToken, getAdminToken } from "../lib/adminSession";
 import { startGatewayCheckout } from "./PaymentGateway";
-import { useTheme } from "../context/themeContext";
 import {
   Users,
   Settings,
@@ -20,7 +21,9 @@ import {
   AlertCircle,
   Database,
   X,
-  FileText
+  FileText,
+  Mail,
+  SquareArrowOutUpRight
 } from "lucide-react";
 
 function formatDate(iso) {
@@ -35,47 +38,13 @@ function formatDate(iso) {
   }
 }
 
-function formatFee(usd, inr) {
-  const u = usd != null && usd !== "" ? Number(usd) : null;
-  const i = inr != null && inr !== "" ? Number(inr) : null;
-  const parts = [];
-  if (u != null && !Number.isNaN(u)) parts.push(`$${u}`);
-  if (i != null && !Number.isNaN(i) && i > 0) parts.push(`₹${i}`);
-  return parts.length ? parts.join(" / ") : "—";
-}
-
 function displayAttendanceMode(row) {
   const mode = row?.attendance_mode ?? row?.attendanceMode ?? "";
   return String(mode).trim() || "Offline";
 }
 
-/** Map DB row from admin-registrations to RegistrationTicket props */
-function rowToTicketData(r) {
-  const usd = Number(r.total_fee_usd);
-  const inr = Number(r.total_fee_inr);
-  return {
-    registrationId: r.registration_id,
-    fullName: r.full_name,
-    email: r.email || "",
-    affiliation: r.affiliation || "",
-    designation: r.designation || "",
-    country: r.country || "",
-    participantType: r.participant_type || "Participant",
-    paperId: r.paper_id || "",
-    paperTitle: r.paper_title || "",
-    numAuthors: r.num_authors != null && r.num_authors !== "" ? String(r.num_authors) : "",
-    attendWorkshop: r.attend_workshop || "",
-    attendanceMode: displayAttendanceMode(r),
-    modeOfPayment: r.mode_of_payment || "",
-    transactionId: r.transaction_id || "",
-    totalFeeUSD: Number.isFinite(usd) ? usd : 0,
-    totalFeeINR: Number.isFinite(inr) ? inr : 0,
-  };
-}
-
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { isDark } = useTheme();
   const [status, setStatus] = useState("checking");
   const [username, setUsername] = useState("");
   const [regs, setRegs] = useState([]);
@@ -84,7 +53,9 @@ export default function AdminDashboard() {
   const [query, setQuery] = useState("");
   const [ticketData, setTicketData] = useState(null);
   const [deleteBusyId, setDeleteBusyId] = useState("");
+  const [mailBusyId, setMailBusyId] = useState("");
   const [actionMsg, setActionMsg] = useState("");
+  const [actionTone, setActionTone] = useState("error");
   const [editForm, setEditForm] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
   const [testPayBusy, setTestPayBusy] = useState(false);
@@ -212,6 +183,7 @@ export default function AdminDashboard() {
   const saveEdit = async () => {
     if (!editForm) return;
     setActionMsg("");
+    setActionTone("error");
     const token = getAdminToken();
     if (!token) return;
     setEditSaving(true);
@@ -249,13 +221,17 @@ export default function AdminDashboard() {
         );
         setTicketData((cur) => {
           if (!cur || cur.registrationId !== updated.registration_id) return cur;
-          return rowToTicketData(updated);
+          return mapAdminRowToTicketData(updated);
         });
         setEditForm(null);
+        setActionTone("success");
+        setActionMsg("Registration updated successfully.");
       } else {
+        setActionTone("error");
         setActionMsg(result?.msg || "Could not save changes");
       }
     } catch (e) {
+      setActionTone("error");
       setActionMsg(e?.message || "Could not save changes");
     } finally {
       setEditSaving(false);
@@ -268,6 +244,7 @@ export default function AdminDashboard() {
     );
     if (!ok) return;
     setActionMsg("");
+    setActionTone("error");
     const token = getAdminToken();
     if (!token) return;
     setDeleteBusyId(r.registration_id);
@@ -279,10 +256,14 @@ export default function AdminDashboard() {
       if (result?.success) {
         setRegs((prev) => prev.filter((x) => x.registration_id !== r.registration_id));
         setTicketData((cur) => (cur?.registrationId === r.registration_id ? null : cur));
+        setActionTone("success");
+        setActionMsg("Registration deleted.");
       } else {
+        setActionTone("error");
         setActionMsg(result?.msg || "Could not delete registration");
       }
     } catch (e) {
+      setActionTone("error");
       setActionMsg(e?.message || "Could not delete registration");
     } finally {
       setDeleteBusyId("");
@@ -291,6 +272,7 @@ export default function AdminDashboard() {
 
   const startOneRupeeTestPayment = async () => {
     setActionMsg("");
+    setActionTone("error");
     setTestPayBusy(true);
     try {
       const stamp = Date.now();
@@ -324,6 +306,42 @@ export default function AdminDashboard() {
       setActionMsg(e?.message || "Could not start ₹1 test payment");
       setTestPayBusy(false);
     }
+  };
+
+  const sendManualTicketEmail = async (r) => {
+    setActionMsg("");
+    setActionTone("error");
+    const token = getAdminToken();
+    if (!token) return;
+    setMailBusyId(r.registration_id);
+    try {
+      const ticketData = mapAdminRowToTicketData(r);
+      const pdfBase64 = await generateTicketPdfBase64(ticketData);
+      const result = await invokeEdge("admin-send-registration-email", {
+        token,
+        registration_id: r.registration_id,
+        pdf_base64: pdfBase64,
+      });
+      if (result?.success) {
+        setActionTone("success");
+        setActionMsg(result?.msg || "Email sent.");
+      } else {
+        setActionTone("error");
+        setActionMsg(result?.msg || "Could not send email");
+      }
+    } catch (e) {
+      setActionTone("error");
+      setActionMsg(e?.message || "Could not send email");
+    } finally {
+      setMailBusyId("");
+    }
+  };
+
+  const openSuccessPagePreview = (r) => {
+    const ticketData = mapAdminRowToTicketData(r);
+    sessionStorage.setItem("registrationResult", JSON.stringify(ticketData));
+    sessionStorage.setItem("openTicketAfterSuccess", "1");
+    navigate("/registration-success");
   };
 
   if (status === "checking") {
@@ -616,7 +634,13 @@ export default function AdminDashboard() {
           </div>
 
           {(regsError || actionMsg) && (
-            <div className="px-6 py-3 bg-red-50 dark:bg-red-950/20 border-b border-red-100 dark:border-red-900/30 flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+            <div
+              className={`px-6 py-3 border-b flex items-center gap-2 text-sm ${
+                !regsError && actionTone === "success"
+                  ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                  : "bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400"
+              }`}
+            >
               <AlertCircle size={16} />
               {regsError || actionMsg}
             </div>
@@ -708,10 +732,25 @@ export default function AdminDashboard() {
                           </button>
                           <button
                             title="View Ticket"
-                            onClick={() => setTicketData(rowToTicketData(r))}
+                            onClick={() => setTicketData(mapAdminRowToTicketData(r))}
                             className="p-2 rounded-lg text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all"
                           >
                             <Eye size={16} />
+                          </button>
+                          <button
+                            title="Send Mail"
+                            disabled={mailBusyId === r.registration_id}
+                            onClick={() => sendManualTicketEmail(r)}
+                            className="p-2 rounded-lg text-zinc-400 hover:text-sky-500 hover:bg-sky-500/10 transition-all disabled:opacity-30"
+                          >
+                            <Mail size={16} />
+                          </button>
+                          <button
+                            title="Open Success Page"
+                            onClick={() => openSuccessPagePreview(r)}
+                            className="p-2 rounded-lg text-zinc-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all"
+                          >
+                            <SquareArrowOutUpRight size={16} />
                           </button>
                           <button
                             title="Delete"

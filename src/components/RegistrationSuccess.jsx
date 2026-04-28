@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RegistrationTicket from "./RegistrationTicket";
+import { invokeEdge } from "../lib/supabaseFunctions";
+import { generateTicketPdfBase64 } from "../lib/ticketPdfGenerator";
+import { mapRegistrationResultToTicketData } from "../lib/ticketData";
 
 function RegistrationSuccess() {
   const navigate = useNavigate();
@@ -23,6 +26,35 @@ function RegistrationSuccess() {
     sessionStorage.removeItem("openTicketAfterSuccess");
     const t = setTimeout(() => setShowTicket(true), 1100);
     return () => clearTimeout(t);
+  }, [registrationData]);
+
+  useEffect(() => {
+    if (!registrationData?.registrationId || !registrationData?.email) return;
+    const key = `ticketEmailSent:${registrationData.registrationId}`;
+    if (sessionStorage.getItem(key) === "1") return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const ticketData = mapRegistrationResultToTicketData(registrationData);
+        const pdfBase64 = await generateTicketPdfBase64(ticketData);
+        if (cancelled) return;
+
+        const res = await invokeEdge("send-registration-ticket-email", {
+          registration_id: registrationData.registrationId,
+          email: registrationData.email,
+          pdf_base64: pdfBase64,
+        });
+        if (cancelled) return;
+        if (res?.success) sessionStorage.setItem(key, "1");
+      } catch (e) {
+        console.error("Ticket email send failed:", e);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [registrationData]);
 
   if (!registrationData) {
@@ -97,7 +129,8 @@ function RegistrationSuccess() {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-yellow-700">
-                  <strong>Email sent.</strong> We&apos;ve emailed a copy of your confirmation and ticket details to your address.
+                  <strong>Email sent.</strong> We&apos;ve emailed a copy of your confirmation and ticket details to your address.{" "}
+                  <span className="text-red-600 font-semibold">Please also check your spam folder.</span>
                 </p>
               </div>
             </div>
