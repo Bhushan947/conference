@@ -22,8 +22,7 @@ import {
   Database,
   X,
   FileText,
-  Mail,
-  SquareArrowOutUpRight
+  Mail
 } from "lucide-react";
 
 function formatDate(iso) {
@@ -281,7 +280,7 @@ export default function AdminDashboard() {
         affiliation: "2AI Admin QA",
         designation: "QA Engineer",
         country: "India",
-        email: `mb4milad.bhattt@gmail.com`,
+        email: `nimrawani04@gmail.com`,
         contactNumber: "9999999999",
         participantType: "Test",
         paperId: `TEST-${String(stamp).slice(-6)}`,
@@ -335,13 +334,6 @@ export default function AdminDashboard() {
     } finally {
       setMailBusyId("");
     }
-  };
-
-  const openSuccessPagePreview = (r) => {
-    const ticketData = mapAdminRowToTicketData(r);
-    sessionStorage.setItem("registrationResult", JSON.stringify(ticketData));
-    sessionStorage.setItem("openTicketAfterSuccess", "1");
-    navigate("/registration-success");
   };
 
   if (status === "checking") {
@@ -744,13 +736,6 @@ export default function AdminDashboard() {
                             className="p-2 rounded-lg text-zinc-400 hover:text-sky-500 hover:bg-sky-500/10 transition-all disabled:opacity-30"
                           >
                             <Mail size={16} />
-                          </button>
-                          <button
-                            title="Open Success Page"
-                            onClick={() => openSuccessPagePreview(r)}
-                            className="p-2 rounded-lg text-zinc-400 hover:text-indigo-500 hover:bg-indigo-500/10 transition-all"
-                          >
-                            <SquareArrowOutUpRight size={16} />
                           </button>
                           <button
                             title="Delete"
