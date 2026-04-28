@@ -135,7 +135,10 @@ function OrganizingCommittee() {
               </h3>
             )}
             
-            {String(section).trim().toUpperCase() === "THEME CHAIRS" ? (
+            {String(section).trim().toUpperCase() === "NATIONAL ADVISORY COMMITTEE" &&
+            (!Array.isArray(members) || members.length === 0) ? (
+              <p className="text-base text-gray-600">Will be declared</p>
+            ) : String(section).trim().toUpperCase() === "THEME CHAIRS" ? (
               <div className="space-y-5">
                 {Object.entries(
                   members.reduce((acc, member) => {
