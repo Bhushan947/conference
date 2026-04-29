@@ -2,8 +2,10 @@
 // https://m4milaad.github.io/ 
 
 import { FileDown, MapPin, BookOpen, CalendarDays, BadgeCheck, Users, Globe, Mic } from "lucide-react";
+import { useTheme } from "../context/themeContext";
 
 const NotificationBar = () => {
+  const { isDark } = useTheme();
   const items = [
     {
       icon: MapPin,
@@ -50,16 +52,23 @@ const NotificationBar = () => {
   ];
 
   const doubled = [...items, ...items];
+  const shellClass = isDark
+    ? "relative overflow-hidden rounded-2xl border border-white/10 bg-[#0F172A] shadow-[0_10px_26px_rgba(0,0,0,0.32)]"
+    : "relative overflow-hidden rounded-2xl border border-black/[0.08] bg-[#FFFDF7] shadow-sm";
+  const glowClass = isDark
+    ? "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(201,168,106,0.07),transparent_34%),radial-gradient(circle_at_88%_82%,rgba(94,106,210,0.08),transparent_36%)]"
+    : "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(232,160,32,0.05),transparent_34%),radial-gradient(circle_at_88%_82%,rgba(123,79,255,0.04),transparent_36%)]";
+  const baseItemClass = isDark
+    ? "mx-2 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-4 py-1.5 text-sm md:text-[15px] font-medium text-zinc-200 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#c9a86a]/45 hover:bg-white/[0.09]"
+    : "mx-2 inline-flex items-center gap-2 rounded-full border border-black/[0.1] bg-white px-4 py-1.5 text-sm md:text-[15px] font-medium text-zinc-800 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#E8A020]/45 hover:bg-white";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[#E8A020]/45 bg-gradient-to-r from-[#FFF9EB] via-[#F8F0DD] to-[#F3E7C8] shadow-[0_10px_28px_rgba(232,160,32,0.16)] dark:border-[#E8A020]/30 dark:bg-[#0A0F1E] dark:shadow-[0_0_28px_rgba(123,79,255,0.12)]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_20%,rgba(232,160,32,0.16),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(123,79,255,0.14),transparent_35%)] dark:bg-[radial-gradient(circle_at_10%_20%,rgba(232,160,32,0.16),transparent_35%),radial-gradient(circle_at_90%_80%,rgba(123,79,255,0.14),transparent_35%)]" />
+    <div className={shellClass}>
+      <div className={glowClass} />
 
       <div className="notification-marquee relative flex w-max items-center whitespace-nowrap py-3 hover:[animation-play-state:paused]">
         {doubled.map((item, idx) => {
           const Icon = item.icon;
-          const baseItemClass =
-            "mx-2 inline-flex items-center gap-2 rounded-full border border-black/[0.14] bg-white/80 px-4 py-1.5 text-sm md:text-[15px] font-medium text-zinc-800 backdrop-blur transition hover:-translate-y-0.5 hover:border-[#E8A020]/60 hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-[#F0EDE6] dark:hover:border-[#E8A020]/50 dark:hover:bg-white/[0.07]";
 
           if (item.href) {
             return (
