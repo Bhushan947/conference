@@ -10,11 +10,15 @@ function bytesToBase64(bytes) {
 }
 
 export async function generateTicketPdfBase64(registrationData) {
+  const desktopCanvasWidth = 1123;
+  const desktopCanvasHeight = 794;
   const mount = document.createElement("div");
   mount.style.position = "fixed";
   mount.style.left = "-20000px";
   mount.style.top = "0";
-  mount.style.width = "980px";
+  mount.style.width = `${desktopCanvasWidth}px`;
+  mount.style.minHeight = `${desktopCanvasHeight}px`;
+  mount.style.overflow = "hidden";
   mount.style.zIndex = "-1";
   document.body.appendChild(mount);
 
@@ -44,6 +48,10 @@ export async function generateTicketPdfBase64(registrationData) {
       useCORS: true,
       backgroundColor: "#f4efe4",
       logging: false,
+      width: desktopCanvasWidth,
+      height: desktopCanvasHeight,
+      windowWidth: desktopCanvasWidth,
+      windowHeight: desktopCanvasHeight,
     });
     const imgData = canvas.toDataURL("image/png");
 

@@ -195,7 +195,10 @@ export default function RegistrationTicket({
 
   const mono = { fontFamily: "'Share Tech Mono', monospace" };
   const sans = { fontFamily: "'DM Sans', sans-serif" };
-  const effectiveWidth = (isPrinting || forceDesktopLayout) ? 1024 : viewportWidth;
+  const shouldUseDesktopLayout = isPrinting || forceDesktopLayout || typeof onTicketReady === "function";
+  const effectiveWidth = shouldUseDesktopLayout ? 1024 : viewportWidth;
+  const desktopCanvasWidth = 1123;
+  const desktopCanvasHeight = 794;
   const isMobile480 = effectiveWidth < 480;
   const isMobile640 = effectiveWidth < 640;
   const isMobile768 = effectiveWidth < 768;
@@ -222,7 +225,8 @@ export default function RegistrationTicket({
       }}>
         <div className="cert-in registration-ticket-frame" style={{
           display: "flex", flexDirection: "column",
-          maxWidth: "920px", width: "100%",
+          maxWidth: shouldUseDesktopLayout ? `${desktopCanvasWidth}px` : "920px",
+          width: shouldUseDesktopLayout ? `${desktopCanvasWidth}px` : "100%",
           boxShadow: "0 32px 100px rgba(0,0,0,0.6)",
           margin: "auto",
         }}>
@@ -297,7 +301,10 @@ export default function RegistrationTicket({
           <div ref={ticketRef} className="print-root" style={{
             background: "#f4efe4",
             padding: isMobile640 ? "20px 16px" : isMobile768 ? "28px 24px" : "36px 44px 32px",
-            position: "relative", overflow: "hidden",
+            position: "relative",
+            overflow: "hidden",
+            width: shouldUseDesktopLayout ? `${desktopCanvasWidth}px` : "100%",
+            minHeight: shouldUseDesktopLayout ? `${desktopCanvasHeight}px` : "auto",
           }}>
 
             {/* dot-grid texture */}
