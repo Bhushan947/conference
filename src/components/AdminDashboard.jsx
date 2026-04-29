@@ -22,7 +22,8 @@ import {
   Database,
   X,
   FileText,
-  Mail
+  Mail,
+  UserPlus
 } from "lucide-react";
 
 function formatDate(iso) {
@@ -58,6 +59,8 @@ export default function AdminDashboard() {
   const [editForm, setEditForm] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
   const [testPayBusy, setTestPayBusy] = useState(false);
+  const [addForm, setAddForm] = useState(null);
+  const [addSaving, setAddSaving] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -237,6 +240,61 @@ export default function AdminDashboard() {
     }
   };
 
+  const openAdd = () => {
+    setActionMsg("");
+    setAddForm({
+      full_name: "",
+      email: "",
+      affiliation: "",
+      designation: "",
+      country: "India",
+      contact_number: "",
+      participant_type: "Delegate",
+      paper_id: "",
+      paper_title: "",
+      num_authors: "",
+      sub_category: "",
+      region: "",
+      attendance_mode: "Offline",
+      attend_workshop: "No",
+      total_fee_usd: "",
+      total_fee_inr: "",
+      mode_of_payment: "ICICI Eazypay",
+      transaction_id: "",
+      date_of_payment: "",
+      payment_verified: true,
+    });
+  };
+
+  const createManualRegistration = async () => {
+    if (!addForm) return;
+    setActionMsg("");
+    setActionTone("error");
+    const token = getAdminToken();
+    if (!token) return;
+    setAddSaving(true);
+    try {
+      const result = await invokeEdge("admin-create-registration", {
+        token,
+        ...addForm,
+      });
+      if (result?.success && result.registration) {
+        setRegs((prev) => [result.registration, ...prev]);
+        setAddForm(null);
+        setActionTone("success");
+        setActionMsg(`Manual registration added: ${result.registration.registration_id}`);
+      } else {
+        setActionTone("error");
+        setActionMsg(result?.msg || "Could not create manual registration");
+      }
+    } catch (e) {
+      setActionTone("error");
+      setActionMsg(e?.message || "Could not create manual registration");
+    } finally {
+      setAddSaving(false);
+    }
+  };
+
   const deleteRegistration = async (r) => {
     const ok = window.confirm(
       `Delete registration ${r.registration_id} for ${r.full_name}? This cannot be undone.`,
@@ -351,6 +409,104 @@ export default function AdminDashboard() {
     <PageLayout title="Admin Dashboard" subtitle="Manage conference registrations and payments">
       {ticketData && (
         <RegistrationTicket registrationData={ticketData} onClose={() => setTicketData(null)} />
+      )}
+
+      {/* Add Modal */}
+      {addForm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-zinc-950/40 backdrop-blur-sm"
+            onClick={() => !addSaving && setAddForm(null)}
+          />
+          <div className="relative linear-card w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-0 shadow-2xl animate-zoomFadeIn">
+            <div className="px-6 py-4 border-b border-[var(--border-soft)] flex items-center justify-between bg-[var(--surface-soft)]/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[var(--brand)]/10 flex items-center justify-center">
+                  <UserPlus size={20} className="text-[var(--brand)]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-[var(--text-main)]">Add Registration Manually</h2>
+                  <p className="text-xs text-[var(--text-soft)]">Create a paid/pending record without payment gateway callback.</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={addSaving}
+                onClick={() => setAddForm(null)}
+                className="p-2 rounded-lg hover:bg-[var(--surface-muted)] transition-colors"
+              >
+                <X size={20} className="text-[var(--text-soft)]" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Full Name *</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.full_name} onChange={(e) => setAddForm((f) => ({ ...f, full_name: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Email *</span>
+                  <input type="email" className="mt-1.5 w-full linear-input" value={addForm.email} onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))} />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Affiliation *</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.affiliation} onChange={(e) => setAddForm((f) => ({ ...f, affiliation: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Participant Type</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.participant_type} onChange={(e) => setAddForm((f) => ({ ...f, participant_type: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Attendance Mode</span>
+                  <select className="mt-1.5 w-full linear-input" value={addForm.attendance_mode} onChange={(e) => setAddForm((f) => ({ ...f, attendance_mode: e.target.value }))}>
+                    <option value="Offline">Offline</option>
+                    <option value="Online">Online</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Fee (INR)</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.total_fee_inr} onChange={(e) => setAddForm((f) => ({ ...f, total_fee_inr: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Transaction ID</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.transaction_id} onChange={(e) => setAddForm((f) => ({ ...f, transaction_id: e.target.value }))} />
+                </label>
+                <label className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-soft)]/50 cursor-pointer sm:col-span-2 transition-all hover:bg-[var(--surface-soft)]">
+                  <input
+                    type="checkbox"
+                    className="w-5 h-5 rounded border-zinc-300 text-[var(--brand)] focus:ring-[var(--brand)]"
+                    checked={addForm.payment_verified}
+                    onChange={(e) => setAddForm((f) => ({ ...f, payment_verified: e.target.checked }))}
+                  />
+                  <div>
+                    <span className="block text-sm font-bold text-[var(--text-main)]">Payment Verified</span>
+                    <span className="text-xs text-[var(--text-soft)]">Mark this record as paid.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-[var(--border-soft)] flex justify-end gap-3 bg-[var(--surface-soft)]/50">
+              <button
+                type="button"
+                disabled={addSaving}
+                onClick={() => setAddForm(null)}
+                className="px-4 py-2 text-sm font-bold text-[var(--text-soft)] hover:text-[var(--text-main)] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={addSaving}
+                onClick={createManualRegistration}
+                className="linear-primary px-6 py-2 text-sm"
+              >
+                {addSaving ? "Creating…" : "Create Registration"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Edit Modal */}
@@ -601,6 +757,13 @@ export default function AdminDashboard() {
               >
                 <QrCode size={14} /> Verify QR
               </Link>
+              <button
+                type="button"
+                onClick={openAdd}
+                className="col-span-2 flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-violet-200 bg-violet-50 text-violet-700 text-[11px] font-bold hover:bg-violet-100 transition-colors"
+              >
+                <UserPlus size={14} /> Add Manual Registration
+              </button>
             </div>
           </div>
         </div>

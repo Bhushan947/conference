@@ -31,6 +31,9 @@ verify_jwt = false
 [functions.admin-update-registration]
 verify_jwt = false
 
+[functions.admin-create-registration]
+verify_jwt = false
+
 [functions.admin-send-registration-email]
 verify_jwt = false
 
