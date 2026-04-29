@@ -76,7 +76,7 @@ function KeyNotes() {
               <p className="text-sm text-[#5E6AD2] dark:text-blue-400 font-medium mb-2">{speaker.role}</p>
               <p className="text-xs text-zinc-700 dark:text-gray-400">{speaker.org}</p>
               {speaker.talkTitle && (
-                <div className="mt-3 border border-[#5E6AD2]/20 bg-[#5E6AD2]/5 px-3 py-2 text-left dark:border-blue-700/30 dark:bg-blue-950/30">
+                <div className="mt-3 border border-[#5E6AD2]/20 bg-[#5E6AD2]/5 px-3 py-2 text-left dark:border-emerald-700/30 dark:from-emerald-950/40 dark:via-green-950/40 dark:to-lime-950/40">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5E6AD2] dark:text-blue-400">
                     Talk Spotlight
                   </p>
