@@ -124,9 +124,18 @@ const fontImport = `
   }
 `;
 
-export default function RegistrationTicket({ registrationData, onClose, onTicketReady }) {
+export default function RegistrationTicket({
+  registrationData,
+  onClose,
+  onTicketReady,
+  forceDesktopLayout = false,
+}) {
   const ticketRef = useRef(null);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024,
+  );
 
   const regId =
     registrationData.registrationId ||
@@ -135,6 +144,30 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
   useEffect(() => {
     document.body.classList.add("registration-ticket-printing");
     return () => document.body.classList.remove("registration-ticket-printing");
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    const activatePrintLayout = () => setIsPrinting(true);
+    const deactivatePrintLayout = () => setIsPrinting(false);
+
+    window.addEventListener("beforeprint", activatePrintLayout);
+    window.addEventListener("afterprint", deactivatePrintLayout);
+
+    const media = window.matchMedia("print");
+    const handleMediaChange = (event) => setIsPrinting(event.matches);
+    media.addEventListener("change", handleMediaChange);
+
+    return () => {
+      window.removeEventListener("beforeprint", activatePrintLayout);
+      window.removeEventListener("afterprint", deactivatePrintLayout);
+      media.removeEventListener("change", handleMediaChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -162,6 +195,17 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
 
   const mono = { fontFamily: "'Share Tech Mono', monospace" };
   const sans = { fontFamily: "'DM Sans', sans-serif" };
+  const effectiveWidth = (isPrinting || forceDesktopLayout) ? 1024 : viewportWidth;
+  const isMobile480 = effectiveWidth < 480;
+  const isMobile640 = effectiveWidth < 640;
+  const isMobile768 = effectiveWidth < 768;
+
+  const handlePrint = () => {
+    setIsPrinting(true);
+    requestAnimationFrame(() => {
+      window.print();
+    });
+  };
 
   return (
     <>
@@ -186,19 +230,19 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
           {/* ── Action bar ── */}
           <div className="no-print" style={{
             display: "flex", 
-            flexDirection: window.innerWidth < 480 ? "column" : "row",
+            flexDirection: isMobile480 ? "column" : "row",
             justifyContent: "space-between", 
             alignItems: "center",
             background: "#111", 
-            padding: window.innerWidth < 480 ? "10px 12px" : "12px 20px", 
+            padding: isMobile480 ? "10px 12px" : "12px 20px", 
             borderRadius: "6px 6px 0 0",
             borderBottom: "1px solid #2a2a2a",
-            gap: window.innerWidth < 480 ? "10px" : "0",
+            gap: isMobile480 ? "10px" : "0",
           }}>
             {/* Left — reg ID in mono */}
             <span style={{
               fontFamily: "'Share Tech Mono', monospace",
-              fontSize: window.innerWidth < 480 ? "9px" : "11px", 
+              fontSize: isMobile480 ? "9px" : "11px", 
               letterSpacing: "0.18em", 
               color: "#555",
             }}>
@@ -209,13 +253,13 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
             <div style={{ 
               display: "flex", 
               alignItems: "center", 
-              gap: window.innerWidth < 480 ? "12px" : "24px",
+              gap: isMobile480 ? "12px" : "24px",
               flexWrap: "wrap",
               justifyContent: "center",
             }}>
 
               {/* Print */}
-              <button className="cert-btn cert-btn-print" onClick={() => window.print()}>
+              <button className="cert-btn cert-btn-print" onClick={handlePrint}>
                 <span className="btn-icon">
                   {/* printer SVG */}
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#f4efe4" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -252,7 +296,7 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
           ══════════════════════════════════ */}
           <div ref={ticketRef} className="print-root" style={{
             background: "#f4efe4",
-            padding: window.innerWidth < 640 ? "20px 16px" : window.innerWidth < 768 ? "28px 24px" : "36px 44px 32px",
+            padding: isMobile640 ? "20px 16px" : isMobile768 ? "28px 24px" : "36px 44px 32px",
             position: "relative", overflow: "hidden",
           }}>
 
@@ -266,15 +310,15 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
             {/* ── Row 1: meta ── */}
             <div style={{ 
               display: "flex", 
-              flexDirection: window.innerWidth < 640 ? "column" : "row",
+              flexDirection: isMobile640 ? "column" : "row",
               justifyContent: "space-between", 
-              alignItems: window.innerWidth < 640 ? "flex-start" : "center", 
+              alignItems: isMobile640 ? "flex-start" : "center", 
               marginBottom: "14px", 
               position: "relative",
-              gap: window.innerWidth < 640 ? "8px" : "0",
+              gap: isMobile640 ? "8px" : "0",
             }}>
               <span style={{ 
-                fontSize: window.innerWidth < 640 ? "8px" : "10px", 
+                fontSize: isMobile640 ? "8px" : "10px", 
                 fontWeight: 700, 
                 letterSpacing: "0.22em", 
                 color: "#555", 
@@ -284,12 +328,12 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
               </span>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <img src="/CUKLogo.png" alt="CUK" style={{ 
-                  height: window.innerWidth < 640 ? "20px" : "26px", 
+                  height: isMobile640 ? "20px" : "26px", 
                   objectFit: "contain" 
                 }}
                   onError={e => e.target.style.display = "none"} />
                 <span style={{ 
-                  fontSize: window.innerWidth < 640 ? "8px" : "10px", 
+                  fontSize: isMobile640 ? "8px" : "10px", 
                   fontWeight: 700, 
                   letterSpacing: "0.22em", 
                   color: "#555", 
@@ -306,30 +350,30 @@ export default function RegistrationTicket({ registrationData, onClose, onTicket
             {/* ══ MAIN HORIZONTAL LAYOUT ══ */}
             <div style={{ 
               display: "flex", 
-              flexDirection: window.innerWidth < 768 ? "column" : "row",
-              gap: window.innerWidth < 768 ? "20px" : "36px", 
+              flexDirection: isMobile768 ? "column" : "row",
+              gap: isMobile768 ? "20px" : "36px", 
               alignItems: "stretch", 
               position: "relative" 
             }}>
 
               {/* LEFT COLUMN — big pixel title + conf details */}
               <div style={{
-                flex: window.innerWidth < 768 ? "1" : "0 0 230px",
+                flex: isMobile768 ? "1" : "0 0 230px",
                 display: "flex", 
                 flexDirection: "column", 
                 justifyContent: "space-between",
-                borderRight: window.innerWidth < 768 ? "none" : "1.5px solid #aaa",
-                borderBottom: window.innerWidth < 768 ? "1.5px solid #aaa" : "none",
-                paddingRight: window.innerWidth < 768 ? "0" : "36px",
-                paddingBottom: window.innerWidth < 768 ? "20px" : "0",
+                borderRight: isMobile768 ? "none" : "1.5px solid #aaa",
+                borderBottom: isMobile768 ? "1.5px solid #aaa" : "none",
+                paddingRight: isMobile768 ? "0" : "36px",
+                paddingBottom: isMobile768 ? "20px" : "0",
               }}>
                 <div style={{
                   ...mono,
-                  fontSize: window.innerWidth < 480 ? "18px" : window.innerWidth < 640 ? "22px" : window.innerWidth < 768 ? "26px" : "32px",
+                  fontSize: isMobile480 ? "18px" : isMobile640 ? "22px" : isMobile768 ? "26px" : "32px",
                   fontWeight: 400,
                   lineHeight: 1.5,
                   color: "#111",
-                  margin: window.innerWidth < 768 ? "0 0 16px" : "0 0 24px",
+                  margin: isMobile768 ? "0 0 16px" : "0 0 24px",
                   textTransform: "uppercase",
                   letterSpacing: "0.01em",
                   whiteSpace: "pre-line",
@@ -344,7 +388,7 @@ Intelligence (2AI)`}
                 {/* detail pills */}
                 <div style={{ 
                   display: "flex", 
-                  flexDirection: window.innerWidth < 480 ? "column" : "row",
+                  flexDirection: isMobile480 ? "column" : "row",
                   flexWrap: "wrap",
                   gap: "10px" 
                 }}>
@@ -356,10 +400,10 @@ Intelligence (2AI)`}
                     <div key={label} style={{ 
                       borderLeft: "2px solid #999", 
                       paddingLeft: "10px",
-                      flex: window.innerWidth < 480 ? "1" : "0 0 auto",
+                      flex: isMobile480 ? "1" : "0 0 auto",
                     }}>
                       <p style={{ 
-                        fontSize: window.innerWidth < 640 ? "7.5px" : "8.5px", 
+                        fontSize: isMobile640 ? "7.5px" : "8.5px", 
                         fontWeight: 700, 
                         letterSpacing: "0.18em", 
                         color: "#888", 
@@ -368,7 +412,7 @@ Intelligence (2AI)`}
                       }}>{label}</p>
                       <p style={{ 
                         ...mono, 
-                        fontSize: window.innerWidth < 640 ? "9px" : "11px", 
+                        fontSize: isMobile640 ? "9px" : "11px", 
                         color: "#222", 
                         margin: 0 
                       }}>{value}</p>
@@ -381,17 +425,17 @@ Intelligence (2AI)`}
               <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
 
                 {/* Presented-to box */}
-                <div style={{ border: "1.5px solid #222", marginBottom: window.innerWidth < 640 ? "16px" : "20px" }}>
+                <div style={{ border: "1.5px solid #222", marginBottom: isMobile640 ? "16px" : "20px" }}>
                   {/* header strip */}
                   <div style={{
                     borderBottom: "1.5px solid #222",
-                    padding: window.innerWidth < 640 ? "6px 12px" : "7px 20px",
-                    display: "flex", alignItems: "center", gap: window.innerWidth < 640 ? "8px" : "12px",
+                    padding: isMobile640 ? "6px 12px" : "7px 20px",
+                    display: "flex", alignItems: "center", gap: isMobile640 ? "8px" : "12px",
                     background: "rgba(0,0,0,0.04)",
                   }}>
                     <div style={{ flex: 1, height: "1px", background: "#666" }} />
                     <span style={{ 
-                      fontSize: window.innerWidth < 640 ? "7.5px" : "9.5px", 
+                      fontSize: isMobile640 ? "7.5px" : "9.5px", 
                       fontWeight: 700, 
                       letterSpacing: "0.22em", 
                       color: "#555", 
@@ -406,30 +450,30 @@ Intelligence (2AI)`}
                   {/* logo + name */}
                   <div style={{ 
                     display: "flex", 
-                    flexDirection: window.innerWidth < 480 ? "column" : "row",
+                    flexDirection: isMobile480 ? "column" : "row",
                     alignItems: "center" 
                   }}>
                     <div style={{
-                      borderRight: window.innerWidth < 480 ? "none" : "1.5px solid #222",
-                      borderBottom: window.innerWidth < 480 ? "1.5px solid #222" : "none",
-                      padding: window.innerWidth < 640 ? "12px 16px" : "16px 20px",
+                      borderRight: isMobile480 ? "none" : "1.5px solid #222",
+                      borderBottom: isMobile480 ? "1.5px solid #222" : "none",
+                      padding: isMobile640 ? "12px 16px" : "16px 20px",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      minWidth: window.innerWidth < 480 ? "100%" : "86px",
+                      minWidth: isMobile480 ? "100%" : "86px",
                     }}>
                       <img src="/logo.png" alt="2AI" style={{ 
-                        height: window.innerWidth < 640 ? "32px" : "42px", 
+                        height: isMobile640 ? "32px" : "42px", 
                         objectFit: "contain" 
                       }}
                         onError={e => { e.target.style.display = "none"; }} />
                     </div>
                     <div style={{ 
-                      padding: window.innerWidth < 640 ? "12px 16px" : "16px 20px",
-                      width: window.innerWidth < 480 ? "100%" : "auto",
-                      textAlign: window.innerWidth < 480 ? "center" : "left",
+                      padding: isMobile640 ? "12px 16px" : "16px 20px",
+                      width: isMobile480 ? "100%" : "auto",
+                      textAlign: isMobile480 ? "center" : "left",
                     }}>
                       <h2 style={{
                         ...mono,
-                        fontSize: window.innerWidth < 480 ? "14px" : window.innerWidth < 640 ? "16px" : "clamp(15px, 2.6vw, 24px)",
+                        fontSize: isMobile480 ? "14px" : isMobile640 ? "16px" : "clamp(15px, 2.6vw, 24px)",
                         fontWeight: 400, color: "#111",
                         margin: 0, textTransform: "uppercase", letterSpacing: "0.04em",
                         wordBreak: "break-word",
@@ -443,9 +487,9 @@ Intelligence (2AI)`}
                 {/* 2×2 details grid */}
                 <div style={{ 
                   display: "grid", 
-                  gridTemplateColumns: window.innerWidth < 640 ? "1fr" : "1fr 1fr", 
-                  gap: window.innerWidth < 640 ? "10px" : "10px 28px", 
-                  marginBottom: window.innerWidth < 640 ? "16px" : "20px" 
+                  gridTemplateColumns: isMobile640 ? "1fr" : "1fr 1fr", 
+                  gap: isMobile640 ? "10px" : "10px 28px", 
+                  marginBottom: isMobile640 ? "16px" : "20px" 
                 }}>
                   {[
                     ["Affiliation", registrationData.affiliation],
@@ -456,7 +500,7 @@ Intelligence (2AI)`}
                   ].map(([label, value]) => (
                     <div key={label} style={{ borderBottom: "1px solid #ccc", paddingBottom: "7px" }}>
                       <p style={{ 
-                        fontSize: window.innerWidth < 640 ? "7.5px" : "8.5px", 
+                        fontSize: isMobile640 ? "7.5px" : "8.5px", 
                         fontWeight: 700, 
                         letterSpacing: "0.18em", 
                         color: "#888", 
@@ -464,7 +508,7 @@ Intelligence (2AI)`}
                         textTransform: "uppercase" 
                       }}>{label}</p>
                       <p style={{ 
-                        fontSize: window.innerWidth < 640 ? "10px" : "12px", 
+                        fontSize: isMobile640 ? "10px" : "12px", 
                         color: "#222", 
                         margin: 0, 
                         wordBreak: "break-word",
@@ -478,12 +522,12 @@ Intelligence (2AI)`}
                 {registrationData.participantType === "Author" && registrationData.paperId && (
                   <div style={{
                     border: "1px dashed #aaa", 
-                    padding: window.innerWidth < 640 ? "8px 10px" : "10px 14px",
+                    padding: isMobile640 ? "8px 10px" : "10px 14px",
                     background: "rgba(255,255,255,0.35)", 
-                    marginBottom: window.innerWidth < 640 ? "16px" : "20px",
+                    marginBottom: isMobile640 ? "16px" : "20px",
                   }}>
                     <p style={{ 
-                      fontSize: window.innerWidth < 640 ? "7.5px" : "8.5px", 
+                      fontSize: isMobile640 ? "7.5px" : "8.5px", 
                       fontWeight: 700, 
                       letterSpacing: "0.18em", 
                       color: "#888", 
@@ -492,13 +536,13 @@ Intelligence (2AI)`}
                     }}>Paper Details</p>
                     <div style={{ 
                       display: "grid", 
-                      gridTemplateColumns: window.innerWidth < 480 ? "1fr" : "1fr 1fr", 
-                      gap: window.innerWidth < 480 ? "6px" : "6px 20px" 
+                      gridTemplateColumns: isMobile480 ? "1fr" : "1fr 1fr", 
+                      gap: isMobile480 ? "6px" : "6px 20px" 
                     }}>
                       {[["Paper ID", registrationData.paperId], ["Authors", registrationData.numAuthors]].map(([l, v]) => (
                         <div key={l}>
                           <p style={{ 
-                            fontSize: window.innerWidth < 640 ? "7px" : "8px", 
+                            fontSize: isMobile640 ? "7px" : "8px", 
                             fontWeight: 700, 
                             letterSpacing: "0.14em", 
                             color: "#aaa", 
@@ -507,15 +551,15 @@ Intelligence (2AI)`}
                           }}>{l}</p>
                           <p style={{ 
                             ...mono, 
-                            fontSize: window.innerWidth < 640 ? "9px" : "11px", 
+                            fontSize: isMobile640 ? "9px" : "11px", 
                             color: "#222", 
                             margin: 0 
                           }}>{v}</p>
                         </div>
                       ))}
-                      <div style={{ gridColumn: window.innerWidth < 480 ? "span 1" : "span 2" }}>
+                      <div style={{ gridColumn: isMobile480 ? "span 1" : "span 2" }}>
                         <p style={{ 
-                          fontSize: window.innerWidth < 640 ? "7px" : "8px", 
+                          fontSize: isMobile640 ? "7px" : "8px", 
                           fontWeight: 700, 
                           letterSpacing: "0.14em", 
                           color: "#aaa", 
@@ -523,7 +567,7 @@ Intelligence (2AI)`}
                           textTransform: "uppercase" 
                         }}>Title</p>
                         <p style={{ 
-                          fontSize: window.innerWidth < 640 ? "9px" : "11px", 
+                          fontSize: isMobile640 ? "9px" : "11px", 
                           color: "#222", 
                           margin: 0,
                           wordBreak: "break-word",
@@ -538,16 +582,16 @@ Intelligence (2AI)`}
                   borderTop: "1px solid #bbb", 
                   paddingTop: "14px", 
                   display: "flex", 
-                  flexDirection: window.innerWidth < 640 ? "column" : "row",
+                  flexDirection: isMobile640 ? "column" : "row",
                   justifyContent: "space-between", 
-                  alignItems: window.innerWidth < 640 ? "center" : "flex-end", 
-                  gap: window.innerWidth < 640 ? "12px" : "16px",
-                  textAlign: window.innerWidth < 640 ? "center" : "left",
+                  alignItems: isMobile640 ? "center" : "flex-end", 
+                  gap: isMobile640 ? "12px" : "16px",
+                  textAlign: isMobile640 ? "center" : "left",
                 }}>
                   {/* Congrats text */}
-                  <div style={{ flex: 1, order: window.innerWidth < 640 ? 2 : 1 }}>
+                  <div style={{ flex: 1, order: isMobile640 ? 2 : 1 }}>
                     <p style={{ 
-                      fontSize: window.innerWidth < 640 ? "7.5px" : "9px", 
+                      fontSize: isMobile640 ? "7.5px" : "9px", 
                       fontWeight: 700, 
                       letterSpacing: "0.2em", 
                       color: "#555", 
@@ -557,7 +601,7 @@ Intelligence (2AI)`}
                       Congratulations &amp; Thank You
                     </p>
                     <p style={{ 
-                      fontSize: window.innerWidth < 640 ? "7.5px" : "9px", 
+                      fontSize: isMobile640 ? "7.5px" : "9px", 
                       color: "#999", 
                       margin: 0 
                     }}>
@@ -572,21 +616,21 @@ Intelligence (2AI)`}
                       flexDirection: "column", 
                       alignItems: "center", 
                       gap: "4px",
-                      borderLeft: window.innerWidth < 640 ? "none" : "1px solid #ccc", 
-                      borderRight: window.innerWidth < 640 ? "none" : "1px solid #ccc",
-                      borderTop: window.innerWidth < 640 ? "1px solid #ccc" : "none",
-                      borderBottom: window.innerWidth < 640 ? "1px solid #ccc" : "none",
-                      padding: window.innerWidth < 640 ? "12px 0" : "0 12px",
-                      order: window.innerWidth < 640 ? 1 : 2,
+                      borderLeft: isMobile640 ? "none" : "1px solid #ccc", 
+                      borderRight: isMobile640 ? "none" : "1px solid #ccc",
+                      borderTop: isMobile640 ? "1px solid #ccc" : "none",
+                      borderBottom: isMobile640 ? "1px solid #ccc" : "none",
+                      padding: isMobile640 ? "12px 0" : "0 12px",
+                      order: isMobile640 ? 1 : 2,
                     }}>
                       <img src={qrCodeUrl} alt="QR" style={{ 
-                        width: window.innerWidth < 640 ? "80px" : "100px", 
-                        height: window.innerWidth < 640 ? "80px" : "100px", 
+                        width: isMobile640 ? "80px" : "100px", 
+                        height: isMobile640 ? "80px" : "100px", 
                         display: "block" 
                       }} />
                       <p style={{ 
                         ...mono, 
-                        fontSize: window.innerWidth < 640 ? "6px" : "7px", 
+                        fontSize: isMobile640 ? "6px" : "7px", 
                         letterSpacing: "0.16em", 
                         color: "#aaa", 
                         textTransform: "uppercase", 
@@ -599,13 +643,13 @@ Intelligence (2AI)`}
 
                   {/* Signature */}
                   <div style={{ 
-                    textAlign: window.innerWidth < 640 ? "center" : "right", 
+                    textAlign: isMobile640 ? "center" : "right", 
                     flex: 1,
                     order: 3,
                   }}>
                     <p style={{ 
                       fontFamily: "cursive", 
-                      fontSize: window.innerWidth < 640 ? "14px" : "17px", 
+                      fontSize: isMobile640 ? "14px" : "17px", 
                       color: "#222", 
                       margin: "0 0 2px", 
                       lineHeight: 1.2 
@@ -613,7 +657,7 @@ Intelligence (2AI)`}
                       Organizing Committee
                     </p>
                     <p style={{ 
-                      fontSize: window.innerWidth < 640 ? "7px" : "8.5px", 
+                      fontSize: isMobile640 ? "7px" : "8.5px", 
                       fontWeight: 700, 
                       letterSpacing: "0.16em", 
                       color: "#888", 
@@ -631,11 +675,11 @@ Intelligence (2AI)`}
             <hr style={{ 
               border: "none", 
               borderTop: "1px solid #ccc", 
-              margin: window.innerWidth < 640 ? "16px 0 8px" : "20px 0 10px", 
+              margin: isMobile640 ? "16px 0 8px" : "20px 0 10px", 
               position: "relative" 
             }} />
             <p style={{ 
-              fontSize: window.innerWidth < 640 ? "7.5px" : "9.5px", 
+              fontSize: isMobile640 ? "7.5px" : "9.5px", 
               color: "#999", 
               textAlign: "center", 
               margin: 0, 
@@ -650,18 +694,18 @@ Intelligence (2AI)`}
           {/* ── Bottom bar ── */}  
           <div className="no-print" style={{
             background: "#111", 
-            padding: window.innerWidth < 480 ? "10px 12px" : "10px 20px",
+            padding: isMobile480 ? "10px 12px" : "10px 20px",
             display: "flex", 
-            flexDirection: window.innerWidth < 480 ? "column" : "row",
+            flexDirection: isMobile480 ? "column" : "row",
             justifyContent: "space-between", 
             alignItems: "center",
             borderRadius: "0 0 6px 6px",
             borderTop: "1px solid #1e1e1e",
-            gap: window.innerWidth < 480 ? "10px" : "0",
+            gap: isMobile480 ? "10px" : "0",
           }}>
             <span style={{
               fontFamily: "'Share Tech Mono', monospace",
-              fontSize: window.innerWidth < 480 ? "8px" : "10px", 
+              fontSize: isMobile480 ? "8px" : "10px", 
               color: "#444", 
               letterSpacing: "0.14em",
               textAlign: "center",
@@ -672,14 +716,14 @@ Intelligence (2AI)`}
               background: "transparent",
               color: "#f4efe4",
               border: "1.5px solid #333",
-              padding: window.innerWidth < 480 ? "8px 24px" : "6px 22px",
+              padding: isMobile480 ? "8px 24px" : "6px 22px",
               fontFamily: "'Share Tech Mono', monospace",
-              fontSize: window.innerWidth < 480 ? "10px" : "11px",
+              fontSize: isMobile480 ? "10px" : "11px",
               letterSpacing: "0.18em",
               textTransform: "uppercase",
               cursor: "pointer",
               transition: "border-color 0.15s, color 0.15s",
-              width: window.innerWidth < 480 ? "100%" : "auto",
+              width: isMobile480 ? "100%" : "auto",
             }}
               onMouseEnter={e => { e.target.style.borderColor = "#f4efe4"; e.target.style.color = "#f4efe4"; }}
               onMouseLeave={e => { e.target.style.borderColor = "#333"; e.target.style.color = "#f4efe4"; }}

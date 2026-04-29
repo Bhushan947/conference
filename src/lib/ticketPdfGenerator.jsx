@@ -30,6 +30,7 @@ export async function generateTicketPdfBase64(registrationData) {
         <RegistrationTicket
           registrationData={registrationData}
           onClose={() => {}}
+          forceDesktopLayout
           onTicketReady={(el) => {
             window.clearTimeout(timeout);
             resolve(el);
