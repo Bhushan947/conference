@@ -16,6 +16,7 @@ function KeyNotes() {
       role: "Professor, Dept of Electrical Engineering",
       org: "Indian Institute of Technology Kanpur, India",
       image: "/nishchal.jpg",
+      talkTitle: "Soft Computing and Computational Intelligence Tools for Today's AI",
       bio: "Dr. Nishchal Kumar Verma is Professor in Electrical Engineering at IIT Kanpur, with more than 20 years of contributions to artificial intelligence and machine learning research. His work spans large language models, intelligent instrumentation, control and automation, computer vision, prognosis and health management, bioinformatics, and cyber-physical systems. He has received major honors including the Smt. Lata and K.G. Karandikar Faculty Chair Professorship and Teaching Excellence Award (2024), alongside international research fellowships from UNEC Azerbaijan and the University of Tennessee. He has published over 270 papers, edited six books, led multiple funded projects including collaborations with The BOEING Company, and served as Associate Editor for leading IEEE journals in AI and neural learning systems.",
     },
   ];
@@ -74,6 +75,16 @@ function KeyNotes() {
               <h4 className="text-lg font-bold text-zinc-900 dark:text-gray-100 mb-1">{speaker.name}</h4>
               <p className="text-sm text-[#5E6AD2] dark:text-blue-400 font-medium mb-2">{speaker.role}</p>
               <p className="text-xs text-zinc-700 dark:text-gray-400">{speaker.org}</p>
+              {speaker.talkTitle && (
+                <div className="mt-3 border border-[#5E6AD2]/20 bg-[#5E6AD2]/5 px-3 py-2 text-left dark:border-blue-700/30 dark:bg-blue-950/30">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5E6AD2] dark:text-blue-400">
+                    Talk Spotlight
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-zinc-900 leading-relaxed dark:text-gray-200">
+                    {speaker.talkTitle}
+                  </p>
+                </div>
+              )}
               {speaker.bio && (
                 <p className="mt-3 text-xs text-zinc-700 dark:text-gray-300 leading-relaxed text-left">
                   {speaker.bio}
