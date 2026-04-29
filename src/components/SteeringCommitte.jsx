@@ -6,6 +6,78 @@ import PageLayout from "./PageLayout";
 import { fetchCommitteeByType } from "../lib/committeeData";
 import { useYear } from "../context/yearContext";
 import conferenceData from "../content/conferenceData";
+import committeeCsv2026 from "../../2AI-2026-Committee.csv?raw";
+
+function parseCsvLine(line) {
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === '"') {
+      const next = line[i + 1];
+      if (inQuotes && next === '"') {
+        cur += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === "," && !inQuotes) {
+      out.push(cur.trim());
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur.trim());
+  return out;
+}
+
+function groupSteeringFromCsv(csvText) {
+  const lines = csvText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length < 2) return {};
+
+  const headers = parseCsvLine(lines[0]).map((h) => h.trim().toLowerCase());
+  const idx = {
+    committeeType: headers.indexOf("committee_type"),
+    subCommittee: headers.indexOf("sub_committe"),
+    name: headers.indexOf("name"),
+    role: headers.indexOf("role"),
+    organization: headers.indexOf("organization"),
+    country: headers.indexOf("country"),
+  };
+
+  const members = [];
+  for (let i = 1; i < lines.length; i += 1) {
+    const cells = parseCsvLine(lines[i]);
+    const committeeType = String(cells[idx.committeeType] ?? "").trim().toLowerCase();
+    const subCommittee = String(cells[idx.subCommittee] ?? "").trim().toLowerCase();
+
+    const isSteeringCommitteeType = committeeType === "steering committee";
+    const isSteeringSubCommittee = subCommittee === "steering committee";
+    const isOrganizingSteering =
+      committeeType === "organizing committee" && isSteeringSubCommittee;
+    if (!isSteeringCommitteeType && !isOrganizingSteering) continue;
+
+    const name = String(cells[idx.name] ?? "").trim();
+    const role = String(cells[idx.role] ?? "").trim();
+    const organization = String(cells[idx.organization] ?? "").trim();
+    const country = String(cells[idx.country] ?? "").trim();
+    if (!name && !role && !organization && !country) continue;
+
+    members.push({
+      name,
+      designation: role,
+      affiliation: organization,
+      country,
+    });
+  }
+
+  return members.length > 0 ? { "Steering Committee Members": members } : {};
+}
 
 function SteeringCommittee() {
   const [committee, setCommittee] = useState({});
@@ -13,6 +85,14 @@ function SteeringCommittee() {
 
   useEffect(() => {
     let cancelled = false;
+
+    if (selectedYear === 2026) {
+      const grouped = groupSteeringFromCsv(committeeCsv2026);
+      setCommittee(grouped);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     // Check if we have hardcoded data for this year first
     const yearData = conferenceData[selectedYear];
