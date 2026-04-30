@@ -14,6 +14,11 @@ function parseNumberOrNull(v: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function normalizeAttendanceMode(v: unknown): "Online" | "Offline" {
+  const normalized = String(v ?? "").trim().toLowerCase();
+  return normalized === "online" ? "Online" : "Offline";
+}
+
 Deno.serve(async (req) => {
   const opt = handleOptions(req);
   if (opt) return opt;
@@ -89,7 +94,7 @@ Deno.serve(async (req) => {
       num_authors: numAuthors,
       sub_category: trimOrNull(b.sub_category),
       region: trimOrNull(b.region),
-      attendance_mode: trimOrNull(b.attendance_mode) ?? "Offline",
+      attendance_mode: normalizeAttendanceMode(b.attendance_mode),
       attend_workshop: trimOrNull(b.attend_workshop),
       total_fee_usd: totalFeeUsd,
       total_fee_inr: totalFeeInr,

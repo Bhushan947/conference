@@ -1,5 +1,8 @@
 function displayAttendanceMode(mode) {
-  return String(mode ?? "").trim() || "Offline";
+  const normalized = String(mode ?? "").trim().toLowerCase();
+  if (normalized === "online") return "Online";
+  if (normalized === "offline") return "Offline";
+  return normalized ? String(mode).trim() : "Offline";
 }
 
 export function mapAdminRowToTicketData(row) {

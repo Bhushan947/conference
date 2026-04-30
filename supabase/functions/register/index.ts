@@ -21,6 +21,11 @@ function truthyPaymentVerified(v: unknown): boolean {
   return v === "true" || v === true || v === 1;
 }
 
+function normalizeAttendanceMode(mode: unknown): "Online" | "Offline" {
+  const normalized = String(mode ?? "").trim().toLowerCase();
+  return normalized === "online" ? "Online" : "Offline";
+}
+
 Deno.serve(async (req) => {
   const opt = handleOptions(req);
   if (opt) return opt;
@@ -143,7 +148,7 @@ Deno.serve(async (req) => {
       sub_category: subCategory ?? null,
       region: region ?? null,
       attend_workshop: attendWorkshop ?? null,
-      attendance_mode: attendanceMode ?? null,
+      attendance_mode: normalizeAttendanceMode(attendanceMode),
       total_fee_usd: parseNumOrNull(totalFeeUsd),
       total_fee_inr: parseNumOrNull(totalFeeInr),
       mode_of_payment: modeOfPayment ?? null,

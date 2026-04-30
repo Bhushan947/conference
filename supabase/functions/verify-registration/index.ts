@@ -1,6 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { corsJson, handleOptions } from "./_shared/cors.ts";
 
+function normalizeAttendanceMode(mode: unknown): "Online" | "Offline" {
+  const normalized = String(mode ?? "").trim().toLowerCase();
+  return normalized === "online" ? "Online" : "Offline";
+}
+
 Deno.serve(async (req) => {
   const opt = handleOptions(req);
   if (opt) return opt;
@@ -43,7 +48,7 @@ Deno.serve(async (req) => {
         fullName: data.full_name,
         email: data.email,
         participantType: data.participant_type,
-        attendanceMode: data.attendance_mode,
+        attendanceMode: normalizeAttendanceMode(data.attendance_mode),
         affiliation: data.affiliation,
         designation: data.designation,
         paperId: data.paper_id,

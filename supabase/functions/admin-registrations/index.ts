@@ -2,6 +2,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { verifyAdminSessionToken } from "../_shared/adminToken.ts";
 import { corsJson, handleOptions } from "../_shared/cors.ts";
 
+function normalizeAttendanceMode(mode: unknown): "Online" | "Offline" {
+  const normalized = String(mode ?? "").trim().toLowerCase();
+  return normalized === "online" ? "Online" : "Offline";
+}
+
 Deno.serve(async (req) => {
   const opt = handleOptions(req);
   if (opt) return opt;
@@ -62,7 +67,12 @@ Deno.serve(async (req) => {
       return corsJson({ success: false, msg: error.message }, 500);
     }
 
-    return corsJson({ success: true, registrations: data ?? [] });
+    const registrations = (data ?? []).map((row) => ({
+      ...row,
+      attendance_mode: normalizeAttendanceMode(row.attendance_mode),
+    }));
+
+    return corsJson({ success: true, registrations });
   } catch (e) {
     console.error(e);
     return corsJson({ success: false, msg: "Failed to load registrations" }, 500);

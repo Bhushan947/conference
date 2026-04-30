@@ -40,6 +40,9 @@ function formatDate(iso) {
 
 function displayAttendanceMode(row) {
   const mode = row?.attendance_mode ?? row?.attendanceMode ?? "";
+  const normalized = String(mode).trim().toLowerCase();
+  if (normalized === "online") return "Online";
+  if (normalized === "offline") return "Offline";
   return String(mode).trim() || "Offline";
 }
 
@@ -169,7 +172,7 @@ export default function AdminDashboard() {
         r.num_authors != null && r.num_authors !== "" ? String(r.num_authors) : "",
       sub_category: r.sub_category ?? "",
       region: r.region ?? "",
-      attendance_mode: String(r.attendance_mode ?? "").trim() || "Offline",
+      attendance_mode: displayAttendanceMode(r),
       attend_workshop: r.attend_workshop ?? "",
       total_fee_usd:
         r.total_fee_usd != null && r.total_fee_usd !== "" ? String(r.total_fee_usd) : "",
@@ -454,8 +457,25 @@ export default function AdminDashboard() {
                   <input className="mt-1.5 w-full linear-input" value={addForm.affiliation} onChange={(e) => setAddForm((f) => ({ ...f, affiliation: e.target.value }))} />
                 </label>
                 <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Designation</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.designation} onChange={(e) => setAddForm((f) => ({ ...f, designation: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Country</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.country} onChange={(e) => setAddForm((f) => ({ ...f, country: e.target.value }))} />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Contact Number</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.contact_number} onChange={(e) => setAddForm((f) => ({ ...f, contact_number: e.target.value }))} />
+                </label>
+                <label className="block">
                   <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Participant Type</span>
-                  <input className="mt-1.5 w-full linear-input" value={addForm.participant_type} onChange={(e) => setAddForm((f) => ({ ...f, participant_type: e.target.value }))} />
+                  <select className="mt-1.5 w-full linear-input" value={addForm.participant_type} onChange={(e) => setAddForm((f) => ({ ...f, participant_type: e.target.value }))}>
+                    <option value="Author">Author</option>
+                    <option value="Non-Author">Non-Author</option>
+                    <option value="Delegate">Delegate</option>
+                    <option value="Test">Test</option>
+                  </select>
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Attendance Mode</span>
@@ -465,12 +485,59 @@ export default function AdminDashboard() {
                   </select>
                 </label>
                 <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Paper ID</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.paper_id} onChange={(e) => setAddForm((f) => ({ ...f, paper_id: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Number of Authors</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.num_authors} onChange={(e) => setAddForm((f) => ({ ...f, num_authors: e.target.value }))} />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Paper Title</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.paper_title} onChange={(e) => setAddForm((f) => ({ ...f, paper_title: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Sub-Category</span>
+                  <select className="mt-1.5 w-full linear-input" value={addForm.sub_category} onChange={(e) => setAddForm((f) => ({ ...f, sub_category: e.target.value }))}>
+                    <option value="">Select sub-category</option>
+                    <option value="UG / PG / PhD Student">UG / PG / PhD Student</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Region</span>
+                  <select className="mt-1.5 w-full linear-input" value={addForm.region} onChange={(e) => setAddForm((f) => ({ ...f, region: e.target.value }))}>
+                    <option value="">Select region</option>
+                    <option value="South Asian">South Asian</option>
+                    <option value="Other Countries">Other Countries</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Workshop</span>
+                  <select className="mt-1.5 w-full linear-input" value={addForm.attend_workshop} onChange={(e) => setAddForm((f) => ({ ...f, attend_workshop: e.target.value }))}>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Mode of Payment</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.mode_of_payment} onChange={(e) => setAddForm((f) => ({ ...f, mode_of_payment: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Fee (USD)</span>
+                  <input className="mt-1.5 w-full linear-input" value={addForm.total_fee_usd} onChange={(e) => setAddForm((f) => ({ ...f, total_fee_usd: e.target.value }))} />
+                </label>
+                <label className="block">
                   <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Fee (INR)</span>
                   <input className="mt-1.5 w-full linear-input" value={addForm.total_fee_inr} onChange={(e) => setAddForm((f) => ({ ...f, total_fee_inr: e.target.value }))} />
                 </label>
                 <label className="block">
                   <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Transaction ID</span>
                   <input className="mt-1.5 w-full linear-input" value={addForm.transaction_id} onChange={(e) => setAddForm((f) => ({ ...f, transaction_id: e.target.value }))} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Date of Payment</span>
+                  <input type="date" className="mt-1.5 w-full linear-input" value={addForm.date_of_payment} onChange={(e) => setAddForm((f) => ({ ...f, date_of_payment: e.target.value }))} />
                 </label>
                 <label className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-soft)]/50 cursor-pointer sm:col-span-2 transition-all hover:bg-[var(--surface-soft)]">
                   <input
@@ -589,6 +656,14 @@ export default function AdminDashboard() {
                         onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
                       />
                     </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Contact Number</span>
+                      <input
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.contact_number}
+                        onChange={(e) => setEditForm((f) => ({ ...f, contact_number: e.target.value }))}
+                      />
+                    </label>
                   </div>
                 </div>
 
@@ -597,11 +672,17 @@ export default function AdminDashboard() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <label className="block">
                       <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Participant Type</span>
-                      <input
+                      <select
                         className="mt-1.5 w-full linear-input"
                         value={editForm.participant_type}
                         onChange={(e) => setEditForm((f) => ({ ...f, participant_type: e.target.value }))}
-                      />
+                      >
+                        <option value="">Select type</option>
+                        <option value="Author">Author</option>
+                        <option value="Non-Author">Non-Author</option>
+                        <option value="Delegate">Delegate</option>
+                        <option value="Test">Test</option>
+                      </select>
                     </label>
                     <label className="block">
                       <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Attendance Mode</span>
@@ -624,12 +705,56 @@ export default function AdminDashboard() {
                       />
                     </label>
                     <label className="block">
-                      <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Workshop</span>
+                      <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Number of Authors</span>
                       <input
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.num_authors}
+                        onChange={(e) => setEditForm((f) => ({ ...f, num_authors: e.target.value }))}
+                      />
+                    </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Paper Title</span>
+                      <input
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.paper_title}
+                        onChange={(e) => setEditForm((f) => ({ ...f, paper_title: e.target.value }))}
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Sub-Category</span>
+                      <select
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.sub_category}
+                        onChange={(e) => setEditForm((f) => ({ ...f, sub_category: e.target.value }))}
+                      >
+                        <option value="">Select sub-category</option>
+                        <option value="UG / PG / PhD Student">UG / PG / PhD Student</option>
+                        <option value="Others">Others</option>
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400 ml-1">Region</span>
+                      <select
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.region}
+                        onChange={(e) => setEditForm((f) => ({ ...f, region: e.target.value }))}
+                      >
+                        <option value="">Select region</option>
+                        <option value="South Asian">South Asian</option>
+                        <option value="Other Countries">Other Countries</option>
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Workshop</span>
+                      <select
                         className="mt-1.5 w-full linear-input"
                         value={editForm.attend_workshop}
                         onChange={(e) => setEditForm((f) => ({ ...f, attend_workshop: e.target.value }))}
-                      />
+                      >
+                        <option value="">Select workshop option</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                      </select>
                     </label>
                   </div>
                 </div>
@@ -637,6 +762,14 @@ export default function AdminDashboard() {
                 <div className="space-y-4 sm:col-span-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-soft)] border-t border-[var(--border-soft)] pt-4">Payment & Verification</h4>
                   <div className="grid sm:grid-cols-2 gap-4">
+                    <label className="block">
+                      <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Fee (USD)</span>
+                      <input
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.total_fee_usd}
+                        onChange={(e) => setEditForm((f) => ({ ...f, total_fee_usd: e.target.value }))}
+                      />
+                    </label>
                     <label className="block">
                       <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Fee (INR)</span>
                       <input
@@ -646,11 +779,28 @@ export default function AdminDashboard() {
                       />
                     </label>
                     <label className="block">
+                      <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Mode of Payment</span>
+                      <input
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.mode_of_payment}
+                        onChange={(e) => setEditForm((f) => ({ ...f, mode_of_payment: e.target.value }))}
+                      />
+                    </label>
+                    <label className="block">
                       <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Transaction ID</span>
                       <input
                         className="mt-1.5 w-full linear-input"
                         value={editForm.transaction_id}
                         onChange={(e) => setEditForm((f) => ({ ...f, transaction_id: e.target.value }))}
+                      />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-bold text-[var(--text-soft)] ml-1">Date of Payment</span>
+                      <input
+                        type="date"
+                        className="mt-1.5 w-full linear-input"
+                        value={editForm.date_of_payment}
+                        onChange={(e) => setEditForm((f) => ({ ...f, date_of_payment: e.target.value }))}
                       />
                     </label>
                     <label className="flex items-center gap-3 p-3 rounded-xl border border-[var(--border-soft)] bg-[var(--surface-soft)]/50 cursor-pointer sm:col-span-2 transition-all hover:bg-[var(--surface-soft)]">
